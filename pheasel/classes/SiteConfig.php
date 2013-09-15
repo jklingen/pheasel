@@ -96,13 +96,22 @@ class SiteConfig extends AbstractLoggingClass {
     /**
      * @param string $tmpl_id id of needed template
      * @param string $lang (optional) two-character language key, defaults to language key of the current page
-     * @return TemplateInfo TemplateInfo containing info e.g.  about directory and language of the requested template
+     * @return TemplateInfo TemplateInfo containing info e.g.  about directory and language of the requested template,
+     *      or NULL if non has been found
+     * @throws AmbiguousConfigException if more than one matching template has been found for the provided ID
      */
     public function get_template_info($tmpl_id, $lang = null) {
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and @lang='$lang']");
-        if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and not(@lang)]");
-        return $this->get_template_info_from_xml($foundNodes);
+        if(count($foundNodes)==0) {
+            // template not found, try to find a non-localized variant
+            $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and not(@lang)]");
+        }
+        switch(count($foundNodes)) {
+            case 0: return NULL;
+            case 1: return $this->get_template_info_from_node($foundNodes[0]);
+            default: throw new AmbiguousConfigException(count($foundNodes)."Two template markup files have been found for id $tmpl_id");
+        }
     }
 
     /**
@@ -133,26 +142,6 @@ class SiteConfig extends AbstractLoggingClass {
                 break;
             case 0:
                 throw new SnippetNotFoundException();
-            default:
-                dump($foundNodes);
-                throw new AmbiguousConfigException();
-        }
-    }
-
-    /**
-     * @param array $foundNodes XML nodes for found template elements
-     * @throws AmbiguousConfigException if multiple nodes were found
-     * @throws TemplateNotFoundException if no node was found
-     * @return TemplateInfo the unique result that has been found
-     */
-    public function get_template_info_from_xml($foundNodes) {
-        switch (count($foundNodes)) {
-            case 1:
-                $foundNode = $foundNodes[0];
-                return $this->get_template_info_from_node($foundNode);
-                break;
-            case 0:
-                throw new TemplateNotFoundException();
             default:
                 dump($foundNodes);
                 throw new AmbiguousConfigException();

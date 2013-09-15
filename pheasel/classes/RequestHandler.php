@@ -68,11 +68,8 @@ class RequestHandler extends AbstractLoggingClass {
         }
         $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
         PageInfo::$current = $pageInfo;
-        if($pageInfo->template != null) {
-            $this->include_current_template();
-        } else {
-            $this->include_current_page();
-        }
+        $this->collate_markup_for_page($pageInfo);
+
         $ret  = $this->head_markup;
         $ret .= '</head>';
         $ret .= $this->body_markup;
@@ -82,9 +79,17 @@ class RequestHandler extends AbstractLoggingClass {
         return $ret;
     }
 
-    public function include_current_template() {
-        $ti = SiteConfig::get_instance()->get_template_info(PageInfo::$current->template);
-        $this->read_markup_file(PHEASEL_PAGES_DIR.$ti->file);
+    private function collate_markup_for_page($page_info) {
+        if(!isset($page_info->template)) {
+            // no explicit template, check for default template (main)
+            $ti = SiteConfig::get_instance()->get_template_info('main');
+            if(isset($ti)) $this->read_markup_file(PHEASEL_PAGES_DIR.$ti->file);
+            else $this->include_current_page(); // no default template, just go on with the page
+        } else {
+            $ti = SiteConfig::get_instance()->get_template_info($page_info->template);
+            if(isset($ti)) $this->read_markup_file(PHEASEL_PAGES_DIR.$ti->file);
+            else throw new TemplateNotFoundException("Template not found for id ".$page_info->template);
+        }
     }
 
     public function include_current_page() {

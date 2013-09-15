@@ -21,24 +21,6 @@
 
 $last_link_target_page_info = null;
 
-function page_here() {
-    RequestHandler::get_instance()->include_current_page();
-}
-
-function snippet_here($snippet_id) {
-    $snippet_info = SiteConfig::get_instance()->get_snippet_info($snippet_id);
-    RequestHandler::get_instance()->read_markup_file(PHEASEL_PAGES_DIR.$snippet_info->file);
-    //include PHEASEL_PAGES_DIR.$snippet_info->file;
-}
-
-function link_url_here($page_id) {
-    global $last_link_target_page_info;
-    $last_link_target_page_info = SiteConfig::get_instance()->get_page_info($page_id);
-    $target_url = $last_link_target_page_info->url;
-    $current_url = PageInfo::$current->url;
-    echo get_relative_uri($current_url, $target_url);
-}
-
 // TODO we should move this somewhere else, it is used by RequestHandler
 function get_link_url($page_id) {
     global $last_link_target_page_info;
@@ -59,10 +41,6 @@ function get_link_url($page_id) {
     return get_relative_uri($current_uri, $target_uri).$anchor;
 }
 
-function link_text_here() {
-    global $last_link_target_page_info ;
-    echo $last_link_target_page_info->name;
-}
 function get_page_name($page_id = NULL) {
     if($page_id == NULL) {
         global $last_link_target_page_info ;
