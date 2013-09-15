@@ -1,0 +1,8 @@
+1. Extract the ZIP to the htdocs directory of your local web server (or to a subdirectory)
+
+2. Start your web server (if it is not running yet) and see http://localhost/ for more information (if you have used a
+   subdirectory in step 1, append it to the URL)
+
+=======
+
+Visit http://pheasel.org/ for further information.
