@@ -54,19 +54,19 @@ class RequestHandler extends AbstractLoggingClass {
     private $messages = array();
 
     /**
-     * @param string $relative_uri URI relative to the location where pheasel has been extracted to (in case it has not been placed at the server root), ny default determined from the current request
+     * @param string $relative_url URL relative to the location where pheasel has been extracted to (in case it has not been placed at the server root), ny default determined from the current request
      * @return string HTML or PHP markup of the rendered page; PHP within the markup will be eval'd by default, set $preserve_php to true to avoid that (e.g. to export pages keeping dynamic php functionality)
      */
-    public function render_page($relative_uri = NULL) {
+    public function render_page($relative_url = NULL) {
         if(PHEASEL_AUTO_UPDATE_FILES_CACHE) {
             SiteConfigWriter::get_instance()->update_cache();
         }
-        if(!isset($relative_uri)) {
+        if(!isset($relative_url)) {
             // pheasel might not be in docroot, discard anything which is above in hierarchy
             $strpos_pheasel = strpos($_SERVER['PHP_SELF'], '/pheasel/');
-            $relative_uri = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
+            $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
         }
-        $pageInfo = SiteConfig::get_instance()->get_page_info_by_uri($relative_uri);
+        $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
         PageInfo::$current = $pageInfo;
         if($pageInfo->template != null) {
             $this->include_current_template();
@@ -181,7 +181,7 @@ class RequestHandler extends AbstractLoggingClass {
         switch($placeholder->name) {
             case 'config': return "";
             case 'msg': return isset($this->messages[$attrs['code']])?$this->messages[$attrs['code']]:NULL;
-            case 'resource': return get_resource_url($attrs['uri']);
+            case 'resource': return get_resource_url($attrs['url']);
             case 'url': return get_link_url($attrs['pageid']);
             case 'pagename': return get_page_name(isset($attrs['pageid'])?$attrs['pageid']:NULL);
             case 'page': $this->include_current_page(); return "";

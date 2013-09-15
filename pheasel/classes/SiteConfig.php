@@ -50,8 +50,8 @@ class SiteConfig extends AbstractLoggingClass {
         $this->xmlRoot = new SimpleXMLElement($xml_str);
     }
 
-    public function get_all_page_uris() {
-        $foundNodes = $this->xmlRoot->xpath("pages/item/@uri");
+    public function get_all_page_urls() {
+        $foundNodes = $this->xmlRoot->xpath("pages/item/@url");
         $ret = array();
         foreach($foundNodes as $foundNode) {
             array_push($ret, (string)$foundNode);
@@ -60,12 +60,12 @@ class SiteConfig extends AbstractLoggingClass {
     }
 
     /**
-     * @param $uri string request uri
+     * @param $url string request url
      * @return PageInfo containing info about directory and language of the requested page
      */
-    public function get_page_info_by_uri($uri) {
-        $foundNodes = $this->xmlRoot->xpath("pages/item[@uri='$uri']");
-        $this->debug("Retrieving page info for URI $uri");
+    public function get_page_info_by_url($url) {
+        $foundNodes = $this->xmlRoot->xpath("pages/item[@url='$url']");
+        $this->debug("Retrieving page info for URL $url");
         return $this->get_page_info_from_xml($foundNodes);
     }
 
@@ -227,7 +227,7 @@ class SiteConfig extends AbstractLoggingClass {
         foreach ($attrs as $key => $value) {
             $value = (string)$value;
             if ($key == 'id') $ret->id = $value;
-            else if ($key == 'uri') $ret->uri = $value;
+            else if ($key == 'url') $ret->url = $value;
             else if ($key == 'name') $ret->name = $value;
             else if ($key == 'lang') $ret->lang = $value;
             else if ($key == 'file') $ret->file = $value;

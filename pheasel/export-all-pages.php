@@ -25,7 +25,7 @@ require_once("classes/SiteConfig.php");
 require_once("classes/RequestHandler.php");
 
 clear_export_dir();
-$all_uris = SiteConfig::get_instance()->get_all_page_uris();
+$all_uris = SiteConfig::get_instance()->get_all_page_urls();
 RequestHandler::get_instance()->batch_mode = true;
 foreach($all_uris as $uri) {
     $rh = new RequestHandler();

@@ -1,6 +1,6 @@
 ${config
 id= id-in-comment
-uri=  /ID-im-Kommentar/
+url=  /ID-im-Kommentar/
 name= ID im Kommentar
 lang= de
 }$

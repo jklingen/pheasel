@@ -34,9 +34,9 @@ function snippet_here($snippet_id) {
 function link_url_here($page_id) {
     global $last_link_target_page_info;
     $last_link_target_page_info = SiteConfig::get_instance()->get_page_info($page_id);
-    $target_uri = $last_link_target_page_info->uri;
-    $current_uri = PageInfo::$current->uri;
-    echo get_relative_uri($current_uri, $target_uri);
+    $target_url = $last_link_target_page_info->url;
+    $current_url = PageInfo::$current->url;
+    echo get_relative_uri($current_url, $target_url);
 }
 
 // TODO we should move this somewhere else, it is used by RequestHandler
@@ -51,8 +51,8 @@ function get_link_url($page_id) {
     }
     if(strlen($page_id)==0) $page_id = PageInfo::$current->id;
     $last_link_target_page_info = SiteConfig::get_instance()->get_page_info($page_id);
-    $target_uri = $last_link_target_page_info->uri;
-    $current_uri = PageInfo::$current->uri;
+    $target_uri = $last_link_target_page_info->url;
+    $current_uri = PageInfo::$current->url;
     if(isset($last_link_target_page_info->data["anchor.".$anchor])) {
         $anchor = '#'.$last_link_target_page_info->data["anchor.".$anchor];
     }
@@ -76,21 +76,21 @@ function get_page_name($page_id = NULL) {
 
 
 function resource_url_here($resource_name) {
-    $current_uri = PageInfo::$current->uri;
+    $current_uri = PageInfo::$current->url;
     //echo $current_uri.'+++'.$resource_name;
     echo get_relative_uri($current_uri, $resource_name);
 }
 
 function get_resource_url($resource_name) {
-    $current_uri = PageInfo::$current->uri;
+    $current_uri = PageInfo::$current->url;
     //echo $current_uri.'+++'.$resource_name;
     return get_relative_uri($current_uri, $resource_name);
 }
 
 /**
  * Build a relative href from
- * @param $current_uri string URI of the current document
- * @param $target_uri string URI of the document to link to
+ * @param $current_url string URL of the current document
+ * @param $target_url string URL of the document to link to
   */
 function get_relative_uri($current_uri, $target_uri)
 {

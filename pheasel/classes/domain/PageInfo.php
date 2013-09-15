@@ -27,7 +27,7 @@ class PageInfo {
     public static $current;
 
     public $id;
-    public $uri;
+    public $url;
     public $name;
     public $lang;
     public $file;

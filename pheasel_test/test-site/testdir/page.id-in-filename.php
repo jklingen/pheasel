@@ -1,5 +1,5 @@
 ${config
-uri=  /ID-in-filename/
+url=  /ID-in-filename/
 name= The ID is in the Filename
 lang= de
 }$
