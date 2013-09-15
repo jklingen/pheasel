@@ -6,7 +6,7 @@
  * number of templates, pages and snippets. It is recommended to disable auto-update as soon as a basic set of
  * templates, pages and snippets is finished and instead adding a bookmark pointing to
  * http://localhost:8080/pheasel/update-file-cache.php
- * in order to easily update the cache manually.
+ * in order to easily update the cache manually..
  */
 const PHEASEL_AUTO_UPDATE_FILES_CACHE = true;
 
