@@ -35,6 +35,7 @@ class RequestHandler extends AbstractLoggingClass {
 
     static public function get_instance() {
         if (null === self::$unique_instance) {
+            echo "new rh";
             self::$unique_instance = new self;
         }
         return self::$unique_instance;
@@ -44,7 +45,7 @@ class RequestHandler extends AbstractLoggingClass {
     static private $APPEND_TARGET_BODY = 2;
 
 
-    public $preserve_php = false;
+    public $preserve_php = 'asdfsdaf';
     public $batch_mode = false;
     private $rendering = false;
     private $current_page_included = false;
@@ -92,7 +93,11 @@ class RequestHandler extends AbstractLoggingClass {
         }
         $ret .= '</body></html>';
         // if no one demands otherwise, we output pure HTML
-        if(!$this->preserve_php) $ret = eval("?>$ret");
+        if(!$this->preserve_php) {
+            ob_start();
+            eval(' ?>'.$ret.'<?php ');
+            $ret = ob_get_clean();
+        }
         return $ret;
     }
 
@@ -269,6 +274,14 @@ class RequestHandler extends AbstractLoggingClass {
         if($parsed && count($parsed) > 0) {
             $this->messages = array_merge($this->messages, $parsed);
         }
+    }
+
+    private function render_developer_bar() {
+        return  '<div id="pheasel-devbar" style="z-index:9999;position:absolute;top:300px;left:0;padding:0 3px; color:#fff;font-size:0.75em;cursor:pointer;background-color:#530;">
+        <span id="pheasel-devbar-control">asdf</span>
+            <span onclick="var c=document.getElementById(\'pheasel-devbar-control\');c.style.display=(c.style.display!=\'none\')?\'none\':\'inline\';">PHeasel&nbsp;»</span>
+        </div>';
+
     }
 
 

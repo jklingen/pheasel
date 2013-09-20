@@ -24,17 +24,19 @@ require_once("globals.php");
 require_once("classes/SiteConfig.php");
 require_once("classes/RequestHandler.php");
 
+// TODO: should be configured outside
+$preserve_php = false;
+$ext = $preserve_php ? "php" : "html";
+
 clear_export_dir();
 $all_uris = SiteConfig::get_instance()->get_all_page_urls();
-RequestHandler::get_instance()->batch_mode = true;
 foreach($all_uris as $uri) {
-    $rh = new RequestHandler();
-    $rh->batch_mode = true;
+    $rh = new RequestHandler(); // do not use the singleton, but a fresh RequestHandler for every page
+    $rh->preserve_php = $preserve_php;
     $markup = $rh->render_page($uri);
     if(!file_exists(PHEASEL_EXPORT_DIR.$uri)) mkdir(PHEASEL_EXPORT_DIR.$uri);
-    file_put_contents(PHEASEL_EXPORT_DIR.$uri."index.html", $markup);
+    file_put_contents(PHEASEL_EXPORT_DIR.$uri."index.$ext", $markup);
 }
-RequestHandler::get_instance()->batch_mode = false;
 copy_static_dir();
 
 function clear_export_dir() {
