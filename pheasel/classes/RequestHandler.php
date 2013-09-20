@@ -56,6 +56,7 @@ class RequestHandler extends AbstractLoggingClass {
     /**
      * @param string $relative_url URL relative to the location where pheasel has been extracted to (in case it has not been placed at the server root), ny default determined from the current request
      * @return string HTML or PHP markup of the rendered page; PHP within the markup will be eval'd by default, set $preserve_php to true to avoid that (e.g. to export pages keeping dynamic php functionality)
+     * @throws PageNotFoundException if no page could be found for this request
      */
     public function render_page($relative_url = NULL) {
         if(PHEASEL_AUTO_UPDATE_FILES_CACHE) {
@@ -67,6 +68,18 @@ class RequestHandler extends AbstractLoggingClass {
             $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
         }
         $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
+        // no page found? extra service: maybe just a trailing slash missing? let's try that:
+        if($pageInfo == null && substr($relative_url,-1) != '/') {
+            $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url.'/');
+            if($pageInfo != null) {
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: ".$_SERVER["REQUEST_URI"].'/');
+                exit;
+            } else {
+                throw new PageNotFoundException("No page could be found for $relative_url");
+            }
+        }
+
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
 
