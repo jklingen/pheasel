@@ -62,35 +62,50 @@ class SiteConfig extends AbstractLoggingClass {
     /**
      * @param $url string request url
      * @return PageInfo containing info about directory and language of the requested page
+     * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
      */
     public function get_page_info_by_url($url) {
         $foundNodes = $this->xmlRoot->xpath("pages/item[@url='$url']");
         $this->debug("Retrieving page info for URL $url");
-        return $this->get_page_info_from_xml($foundNodes);
+        switch(count($foundNodes)) {
+            case 0: return null;
+            case 1: return $this->get_page_info_from_node($foundNodes[0]);
+            default: throw new AmbiguousConfigException(count($foundNodes)." page markup files have been found for URL $url");
+        }
     }
 
     /**
      * @param string $page_id id of needed page
      * @param string $lang (optional) two-character language key, defaults to language key of the current page
      * @return PageInfo PageInfo containing info e.g. about directory and language of the requested page
+     * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
      */
     public function get_page_info($page_id, $lang = null) {
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and @lang='$lang']");
         if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and not(@lang)]");
-        return $this->get_page_info_from_xml($foundNodes);
+        switch(count($foundNodes)) {
+            case 0: return NULL;
+            case 1: return $this->get_page_info_from_node($foundNodes[0]);
+            default: throw new AmbiguousConfigException(count($foundNodes)." page markup files have been found for id $page_id");
+        }
     }
 
     /**
      * @param string $snippet_id id of needed snippet
      * @param string $lang (optional) two-character language key, defaults to language key of the current page
      * @return SnippetInfo SnippetInfo containing info e.g.  about directory and language of the requested snippet
+     * @throws AmbiguousConfigException if more than one matching snippet has been found for the provided ID
      */
     public function get_snippet_info($snippet_id, $lang = null) {
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and @lang='$lang']");
         if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and not(@lang)]");
-        return $this->get_snippet_info_from_xml($foundNodes);
+        switch(count($foundNodes)) {
+            case 0: return NULL;
+            case 1: return $this->get_snippet_info_from_node($foundNodes[0]);
+            default: throw new AmbiguousConfigException(count($foundNodes)." snippet markup files have been found for id $snippet_id");
+        }
     }
 
     /**
@@ -110,7 +125,7 @@ class SiteConfig extends AbstractLoggingClass {
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_template_info_from_node($foundNodes[0]);
-            default: throw new AmbiguousConfigException(count($foundNodes)."Two template markup files have been found for id $tmpl_id");
+            default: throw new AmbiguousConfigException(count($foundNodes)." template markup files have been found for id $tmpl_id");
         }
     }
 
@@ -126,44 +141,6 @@ class SiteConfig extends AbstractLoggingClass {
             array_push($ret, $this->get_page_info_from_node($foundNode));
         }
         return $ret;
-    }
-
-    /**
-     * @param array $foundNodes XML nodes for found snippet elements
-     * @throws AmbiguousConfigException if multiple nodes were found
-     * @throws SnippetNotFoundException if no node was found
-     * @return SnippetInfo the unique result that has been found
-     */
-    public function get_snippet_info_from_xml($foundNodes) {
-        switch (count($foundNodes)) {
-            case 1:
-                $foundNode = $foundNodes[0];
-                return $this->get_snippet_info_from_node($foundNode);
-                break;
-            case 0:
-                throw new SnippetNotFoundException();
-            default:
-                dump($foundNodes);
-                throw new AmbiguousConfigException();
-        }
-    }
-
-    /**
-     * @param array $foundNodes XML nodes for found page elements
-     * @throws AmbiguousConfigException if multiple nodes were found
-     * @throws PageNotFoundException if no node was found
-     * @return PageInfo the unique result that has been found
-     */
-    public function get_page_info_from_xml($foundNodes) {
-        switch (count($foundNodes)) {
-            case 1:
-                $foundNode = $foundNodes[0];
-                return $this->get_page_info_from_node($foundNode);
-            case 0:
-                throw new PageNotFoundException();
-            default:
-                throw new AmbiguousConfigException();
-        }
     }
 
     public function get_xml() {
