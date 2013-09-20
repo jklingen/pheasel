@@ -88,7 +88,7 @@ class RequestHandler extends AbstractLoggingClass {
         $ret  = $this->head_markup;
         $ret .= '</head>';
         $ret .= $this->body_markup;
-        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) {
+        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
             $ret .= $this->render_developer_bar();
         }
         $ret .= '</body></html>';
