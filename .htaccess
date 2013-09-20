@@ -23,7 +23,8 @@ RewriteEngine On
 #RewriteRule pheasel/index\.php - [L]
 
 # static resources
-RewriteRule ^static/(.*) site/static/$1 [L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^(.+/)?static/(.*) site/$1static/$2 [L]
 
 # root directory
 RewriteRule ^$ pheasel/index.php [L]
