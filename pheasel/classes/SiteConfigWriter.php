@@ -79,7 +79,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
 
         $file_content = file_get_contents($path);
 
-        if(preg_match_all(PLACEHOLDER_REGEX, $file_content, $placeholders)) {
+        if(preg_match_all(PHEASEL_PLACEHOLDER_REGEX, $file_content, $placeholders)) {
             //global $pages_node;
             //$page_node = NULL;
             foreach($placeholders[1] as $placeholder) {

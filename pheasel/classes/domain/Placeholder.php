@@ -42,8 +42,8 @@ class Placeholder {
     function __construct($placeholder_string, $section_mode = Placeholder::SECTION_MODE_IGNORE) {
         $placeholder_string = trim($placeholder_string);
         // get rid of ${ and }$
-        $placeholder_string = str_replace(PLACEHOLDER_PREFIX, "", $placeholder_string);
-        $placeholder_string = str_replace(PLACEHOLDER_SUFFIX, "", $placeholder_string);
+        $placeholder_string = str_replace(PHEASEL_PLACEHOLDER_PREFIX, "", $placeholder_string);
+        $placeholder_string = str_replace(PHEASEL_PLACEHOLDER_SUFFIX, "", $placeholder_string);
         $exp = preg_split('/\s+/', $placeholder_string, 2);
         $this->name = $exp[0];
         if(count($exp)>1) {

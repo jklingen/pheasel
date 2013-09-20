@@ -59,7 +59,7 @@ class RequestHandler extends AbstractLoggingClass {
      * @throws PageNotFoundException if no page could be found for this request
      */
     public function render_page($relative_url = NULL) {
-        if(PHEASEL_AUTO_UPDATE_FILES_CACHE) {
+        if((PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) && PHEASEL_AUTO_UPDATE_FILES_CACHE) {
             SiteConfigWriter::get_instance()->update_cache();
         }
         if(!isset($relative_url)) {
@@ -80,12 +80,16 @@ class RequestHandler extends AbstractLoggingClass {
             }
         }
 
+
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
 
         $ret  = $this->head_markup;
         $ret .= '</head>';
         $ret .= $this->body_markup;
+        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) {
+            $ret .= $this->render_developer_bar();
+        }
         $ret .= '</body></html>';
         // if no one demands otherwise, we output pure HTML
         if(!$this->preserve_php) $ret = eval("?>$ret");
@@ -164,10 +168,10 @@ class RequestHandler extends AbstractLoggingClass {
 
     // searches for pheasel_placeholders
     private function process_and_append_markup($append_target, $markup) {
-        $parts = explode(PLACEHOLDER_PREFIX, $markup); // (.*)${(.*)
+        $parts = explode(PHEASEL_PLACEHOLDER_PREFIX, $markup); // (.*)${(.*)
         $this->append($append_target, $parts[0]);
         for($i=1; $i<count($parts); $i++) {
-            $subparts = explode(PLACEHOLDER_SUFFIX, $parts[$i]);  // (.*)}$(.*)
+            $subparts = explode(PHEASEL_PLACEHOLDER_SUFFIX, $parts[$i]);  // (.*)}$(.*)
             $this->append($append_target, $this->process_placeholder_string($subparts[0]));
             if(count($subparts )>1) {
                 $this->append($append_target, $this->unescape_escaped_placeholders($subparts[1]));
@@ -189,7 +193,7 @@ class RequestHandler extends AbstractLoggingClass {
     private function process_placeholder_string($placeholder) {
         $ph = new Placeholder($placeholder);
         $ret = $this->process_placeholder($ph);
-        if($ret === NULL) $ret = PLACEHOLDER_PREFIX .$placeholder. PLACEHOLDER_SUFFIX; // if we cannot handle it, restore original placeholder - maybe someone else will take care
+        if($ret === NULL) $ret = PHEASEL_PLACEHOLDER_PREFIX .$placeholder. PHEASEL_PLACEHOLDER_SUFFIX; // if we cannot handle it, restore original placeholder - maybe someone else will take care
         return $ret;
     }
 
@@ -217,8 +221,8 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function unescape_escaped_placeholders($markup_with_escaped_placeholders) {
-        $ret = str_replace(PLACEHOLDER_PREFIX_ESCAPED, PLACEHOLDER_PREFIX, $markup_with_escaped_placeholders);
-        $ret = str_replace(PLACEHOLDER_SUFFIX_ESCAPED, PLACEHOLDER_SUFFIX, $ret);
+        $ret = str_replace(PHEASEL_PLACEHOLDER_PREFIX_ESCAPED, PHEASEL_PLACEHOLDER_PREFIX, $markup_with_escaped_placeholders);
+        $ret = str_replace(PHEASEL_PLACEHOLDER_SUFFIX_ESCAPED, PHEASEL_PLACEHOLDER_SUFFIX, $ret);
         return $ret;
     }
 
