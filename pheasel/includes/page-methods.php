@@ -69,11 +69,11 @@ function get_resource_url($resource_name) {
  * Build a relative href from
  * @param $current_url string URL of the current document
  * @param $target_url string URL of the document to link to
-  */
-function get_relative_uri($current_uri, $target_uri)
-{
-    $target_exp = explode("/", $target_uri);
-    $current_exp = explode("/", $current_uri);
+ * @return string the relative URL need to reference target URL from current URL
+ */
+function get_relative_uri($current_url, $target_url) {
+    $target_exp = explode("/", $target_url);
+    $current_exp = explode("/", $current_url);
     while ( count($target_exp)>0 && $target_exp[0] == $current_exp[0]) {
         array_shift($target_exp);
         array_shift($current_exp);
@@ -81,6 +81,7 @@ function get_relative_uri($current_uri, $target_uri)
     for($i=0; $i< count($current_exp)-1; $i++) {
         array_unshift($target_exp, "..");
     }
-    return implode("/", $target_exp);
-
+    $ret = implode("/", $target_exp);
+    if(strlen($ret)==0) $ret= ".";
+    return $ret;
 }
