@@ -35,7 +35,6 @@ class RequestHandler extends AbstractLoggingClass {
 
     static public function get_instance() {
         if (null === self::$unique_instance) {
-            echo "new rh";
             self::$unique_instance = new self;
         }
         return self::$unique_instance;
@@ -45,7 +44,7 @@ class RequestHandler extends AbstractLoggingClass {
     static private $APPEND_TARGET_BODY = 2;
 
 
-    public $preserve_php = 'asdfsdaf';
+    public $preserve_php = false;
     public $batch_mode = false;
     private $rendering = false;
     private $current_page_included = false;
