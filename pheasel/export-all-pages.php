@@ -33,6 +33,7 @@ $all_uris = SiteConfig::get_instance()->get_all_page_urls();
 foreach($all_uris as $uri) {
     $rh = new RequestHandler(); // do not use the singleton, but a fresh RequestHandler for every page
     $rh->preserve_php = $preserve_php;
+    $rh->batch_mode = true;
     $markup = $rh->render_page($uri);
     if(!file_exists(PHEASEL_EXPORT_DIR.$uri)) mkdir(PHEASEL_EXPORT_DIR.$uri);
     file_put_contents(PHEASEL_EXPORT_DIR.$uri."index.$ext", $markup);
