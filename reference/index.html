@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/pheasel.css"/>
+    <script type="text/javascript" src="../static/jquery-1.10.1.min.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+
+
+    
+    <script type="text/javascript" src="../static/shCore.js"></script>
+    <script type="text/javascript" src="../static/shBrushXml.js"></script>
+    <script type="text/javascript" src="../static/shBrushPhp.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/shCore.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/shThemeDefault.css"/>
+
+
+</head>
+<body>
+
+
+<nav class="clearfix">
+
+
+        <ul>
+        <li class="logo"><a href="../" title="Homepage"><img src="../static/pheasel-logo.png" alt="PHeasel logo" /></a></li>
+        <li ><a href="../features/">Features</a></li>
+        <li ><a href="../getting-started/">Getting Started</a></li>
+        <li class="active"><a href=".">Reference</a></li>
+        <li ><a href="../download/">Download</a></li>
+    </ul>
+    <div class="misc">
+        <a href="../impressum/" class="impressum" rel="nofollow">Impressum</a>
+    </div>
+</nav>
+<div id="main">
+
+
+
+<h1>Reference</h1>
+<p>
+    Please note: this page is a compact reference documenting the usage of PHeasel's placeholders, if you are new to PHeasel you might prefer to have a look at
+    <a href="../getting-started/">Getting Started With PHeasel</a> first, which will take you throught the most important features step by step.
+</p>
+<h2>Markup Configuration Parameters</h2>
+<div class="left-col">
+    <p>Markup configuration parameters are always enclosed within <code>${config</code> and <code>}$</code>. You can put it anywhere
+    in the markup file, but we recommend placing it on top or within the <code>&lt;head&gt;</code> section. This
+    part will not be included in the HTML output to your visitors, however if you prefer valid HTML in your
+    HTML editor, feel free to wrap it into an HTML comment. You can also do without line breaks and  put it all in one line.</p>
+    <p>There are three kinds of markup files:
+        <a href=".#page-markup-parameters">pages</a>,
+        <a href=".#template-markup-parameters">templates</a> and
+        <a href=".#snippet-markup-parameters">snippets</a>.</p>
+</div>
+<div class="right-col codesnippet">
+    <span class="caption">Example</span>
+    <pre class="brush: xml; highlight: [5,6,7]">
+        &lt;!DOCTYPE HTML&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;!--
+            ${config
+                id   = myMarkupFileId
+            }$
+            --&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        &lt;/body&gt;
+        &lt;/html&gt;
+    </pre>
+
+</div>
+<div class="clearer"></div>
+<h3 id="page-markup-parameters">Page Markup Parameters</h3>
+<p>A page is a piece of markup that contains your actual page content. Your visitors will be able to access a page by URL.</p>
+<code class="block">${config url=... [id=...] [name=...] [template=...] }$</code>
+<table>
+    <tr>
+        <th>Option name</th>
+        <th>Description</th>
+        <th>Unique?</th>
+        <th>Optional?</th>
+        <th>Default value</th>
+    </tr>
+    <tr>
+        <td><code>id</code></td>
+        <td>You will need the ID to reference the page from other places, e.g. when creating links.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>ID generated from directory path and filename, omitting language and type</td>
+    </tr>
+    <tr>
+        <td><code>url</code></td>
+        <td>Your visitors will be able to access the page under the given URL.</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td><code>name</code></td>
+        <td>A short name describing your page, can be used e.g. for links or navigation elements.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td><code>template</code></td>
+        <td>ID of the template to be used for the page</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td><code>main</code> (if a template with ID main exists)</td>
+    </tr>
+</table>
+<div class="hint">
+    <h3>BTW: Optional Configuration Parameters</h3>
+    <p>
+        <code>id</code>: If you leave it out, PHeasel will assign one internally, derived from the relative path within the <code>site</code> directory. For example, the file
+        <code>site/myDirectory/mySubDirectory/page.myPageFile.en.php</code> will have the ID <code>myDirectory.mySubDirectory.myPageFile</code>.<br/>
+        It is convenient and tempting not to manually assign page IDs, but always keep one thing in mind: if you do so, you give up one of the benefits of PHeasel: file system independency.
+        So if you ever want to rename or move the page file, you will also have to modify all links pointing to it.
+    </p>
+    <p>
+        <code>name</code>: If you omit this, you will have to take care of labeling all links in your markup yourself, which might make it more difficult for you to create or use navigational elements
+        like page navigation, bread crumb navigation or sitemap. You will read more about this later.
+    </p>
+</div>
+
+<h3 id="template-markup-parameters">Template Markup Parameters</h3>
+<p>A template is a markup wrapper for the pages referencing it. It is usually used to re-use shared markup for page headers and footers, e.g. logo or navigation elements.</p>
+<code class="block">${config [id=...] }$</code>
+<p>Within the template's markup, use the <a href=".pageplaceholder">page placeholder</a> <code>${page}$</code> to indicate where the actual page content is to be inserted.</code></p>
+<table>
+    <tr>
+        <th>Option name</th>
+        <th>Description</th>
+        <th>Unique?</th>
+        <th>Optional?</th>
+        <th>Default value</th>
+    </tr>
+    <tr>
+        <td><code>id</code></td>
+        <td>You will need the ID to reference the template from pages.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>ID generated from directory path and filename, omitting language and type</td>
+    </tr>
+
+</table>
+
+<h3 id="template-markup-parameters">Snippet Markup Parameters</h3>
+<p>Snippets are a convenient way to re-use pieces of markup within different pages, e.g. a teaser box in your sidebar, markup for advertisements or any custom component.</p>
+<code class="block">${config [id=...] }$</code>
+<table>
+    <tr>
+        <th>Option name</th>
+        <th>Description</th>
+        <th>Unique?</th>
+        <th>Optional?</th>
+        <th>Default value</th>
+    </tr>
+    <tr>
+        <td><code>id</code></td>
+        <td>You will need the ID to reference the snippet from pages, templates or other snippets.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>ID generated from directory path and filename, omitting language and type</td>
+    </tr>
+</table>
+
+<h2>Placeholders</h2>
+Placeholders look similar to markup configuration parameters (described above), and are also processed by PHeasel
+while it renders the page. However, placeholders are not simply read and removed from output, but rather replaced
+with a piece of dynamic information, e.g. a relative URL to another page.
+
+<h3 id="url-pagename-placeholders">URL and page name placeholders</h3>
+<div class="clearfix">
+    <p class="left-col">
+        A URL placeholder is replaced by a (relative) URL to another PHeasel page, for use with HTML links.<br/>
+        If the <code>name</code> parameter is configured in the <a href=".#page-markup-parameters">page markup configuration</a>,
+        the <code>${pagename}$</code> can be used to output the name of the target page. It is always replaced with the name
+        of the page that has been last adressed with a URL placeholder.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: xml; highlight: [2]">
+            <!-- link to page with ID "mypage" -->
+            &lt;a href="${url pageid=mypage}$"&gt;${pagename}$&lt;/a&gt;
+        </pre>
+        <span class="caption" >The link above would be rendered e.g. like</span>
+        <pre class="brush: xml;">
+            &lt;a href="my-page/"&gt;My Page&lt;/a&gt; &lt;!-- (en) or --&gt;
+            &lt;a href="meine-seite/"&gt;Meine Seite&lt;/a&gt; &lt;!-- (de) --&gt;
+        </pre>
+    </div>
+</div>
+
+
+<h3 id="resource-placeholders">Resource placeholders</h3>
+<div class="clearfix">
+    <p class="left-col">
+        Similar to the URL placeholder, the resource placeholder is used to create a reference, just for static resources
+        like external style sheets, javascript or images. Requests to static resources are waved through directly by PHeasel, so
+        in theory you could as well just reference an image within the <code>site/static/</code> directory like
+        <code>/static/logo.png</code>. However, using the resource placeholder gives you more flexibity, especially if
+        your PHeasel site is not located directly in the document root of your web server.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: xml; highlight: [2]">
+            <!-- referencing logo.png in site/static/img/ -->
+            &lt;img src="${resource url=/static/img/logo.png}$"&gt;
+        </pre>
+        <span class="caption">The image above would be rendered e.g. like</span>
+            <pre class="brush: xml;">
+                &lt;img src="static/img/logo.png"&gt;
+            </pre>
+    </div>
+</div>
+
+<h3 id="anchor-placeholders">Anchor placeholders</h3>
+<div class="clearfix">
+    <p class="left-col">
+        Anchor placeholders are useful if you want to internationalise the part after the hash (<code>#</code>) symbol
+        of a URL
+        Similar to the URL placeholder, the resource placeholder is used to create a reference, just for static resources
+        like external style sheets, javascript or images. Requests to static resources are waved through directly by PHeasel, so
+        in theory you could as well just reference an image within the <code>site/static/</code> directory like
+        <code>/static/logo.png</code>. However, using the resource placeholder gives you more flexibity, especially if
+        your PHeasel site is not located directly in the document root of your web server.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: xml; highlight: [2]">
+            &lt;h3 id="${anchor id=myheadline}$"&gt;My Headline&lt;/a&gt;
+        </pre>
+        <span class="caption" >The link above would be rendered e.g. like</span>
+        <pre class="brush: xml;">
+            &lt;a href="my-page/#my-headline"&gt;My Headline&lt;/a&gt; &lt;!-- (en) or --&gt;
+            &lt;a href="meine-seite/#meine-ueberschrift"&gt;Meine &Uuml;berschrift&lt;/a&gt; &lt;!-- (de) --&gt;
+        </pre>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function() {
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.all();
+    });
+</script>
+
+
+</div>
+<footer>
+    <div class="attribution">
+        <ul>
+            <li></li>
+            <li></li>
+            <!--<li>Hosted by <a href="http://github.com/">GitHub</a></li>
+            <li>Powered by <a href="http://pheasel.org/">PHeasel</a></li>-->
+            <li>&copy 2013 pheasel.org</li>
+        </ul>
+    </div>
+</footer>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-43430636-1', 'pheasel.org');
+    ga('send', 'pageview');
+
+</script>
+
+</body></html>

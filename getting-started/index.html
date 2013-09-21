@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/pheasel.css"/>
+    <script type="text/javascript" src="../static/jquery-1.10.1.min.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+
+
+    
+    <script type="text/javascript" src="../static/shCore.js"></script>
+    <script type="text/javascript" src="../static/shBrushXml.js"></script>
+    <script type="text/javascript" src="../static/shBrushPhp.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/shCore.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/shThemeDefault.css"/>
+
+
+</head>
+<body>
+
+
+<nav class="clearfix">
+
+
+        <ul>
+        <li class="logo"><a href="../" title="Homepage"><img src="../static/pheasel-logo.png" alt="PHeasel logo" /></a></li>
+        <li ><a href="../features/">Features</a></li>
+        <li class="active"><a href=".">Getting Started</a></li>
+        <li ><a href="../reference/">Reference</a></li>
+        <li ><a href="../download/">Download</a></li>
+    </ul>
+    <div class="misc">
+        <a href="../impressum/" class="impressum" rel="nofollow">Impressum</a>
+    </div>
+</nav>
+<div id="main">
+
+
+
+<h1>Getting Started</h1>
+<p>
+    So you are new to PHeasel and want to get an idea how things work? Then you are in the right place and it will just
+    take a few minutes. This page will
+    give you a kickstart into performing tasks with PHeasel. The examples below cover the important things you need to
+    know, but be sure to have a look at the <a href="../reference/">reference</a> page later on, to find
+    details about the possiblities.
+</p>
+<h2 id="markup">Working with Markup</h2>
+<p>
+    You will create your website in PHeasel's <code>/site/</code> subdirectory; it is your realm. The directory
+    structure within can be set up completely at your convenience. Well, except the <code>/static/</code> directory...
+    we will cover this one later.
+</p>
+
+<h3 id="pages-and-pretty-urls">Pages &ndash; Mapping Pretty URLs to Your Content</h3>
+<div class="clearfix">
+    <p class="left-col">
+        To create a page, simply create a new file anywhere within the <code>/site/</code> directory - the filename must
+        contain the word <code>page</code>, separated by a dot (<code>.</code>) from the rest, e.g.
+        <code>mypagefilename.page.php</code> or <code>page.mypagefilename.php</code>. To make the page accessible through a pretty
+        URL, we need to add a little configuration to the markup, see example on the right.<br/>
+        Voila &ndash; the page can be accessed by entering e.g. <code>http://localhost/my-page/</code> into the
+        browser adress bar. Pretty URL. Pretty easy.<br/>
+        For more details, have a look at the <a href="../reference/#page-markup-parameters">page markup reference</a>.
+
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example: page markup</span>
+        <pre class="brush: xml; highlight: [5,6,7,8]">
+            &lt;!DOCTYPE HTML&gt;
+            &lt;html&gt;
+            &lt;head&gt;
+                &lt;!--
+                ${config
+                    id   = mypage
+                    url  = /my-page/
+                }$ &nbsp;
+                --&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                Page content goes here.
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </pre>
+    </div>
+</div>
+
+<h3 id="links">Links &ndash; Referencing Pages</h3>
+<div class="clearfix">
+    <p class="left-col">
+        Have you noticed the (yet) unused <code>id</code> in above example? You won't be surprised to hear that you
+        need the ID in order to reference your page.<br/>
+        For more details, have a look at the <a href="../reference/url">URL placeholder reference</a>.
+
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example: link</span>
+        <pre class="brush: xml; highlight:[2]">
+            &nbsp;
+            &lt;a href="${url pageid=mypage}$"&gt;Link to my new page&lt;/a&gt;
+            &nbsp;
+        </pre>
+    </div>
+</div>
+
+<h3 id="templates-reusing-surrounding-markup">Templates &ndash; Re-using Surrounding Markup</h3>
+<div class="clearfix">
+    <p class="left-col">
+        Nearly every website out there has a common portion of markup wrapping the actual page content, e.g. logo,
+        navigation and footer. With PHeasel you can put this markup into a template. Simply create another markup
+        file anywhere in the <code>/site/</code> directory. Templates need to have the word <code>tmpl</code> in the
+        file name, e.g. <code>tmpl.mytemplatefilename.php</code>.<br/>
+        Again, an ID is needed to reference the template. In addition, the template markup must contain a
+        <code>${page}$</code> to indicate where the actual page markup
+        is to be inserted.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example: template markup</span>
+        <pre class="brush: xml; highlight: [5,6,7,12]">
+            &lt;!DOCTYPE HTML&gt;
+            &lt;html&gt;
+            &lt;head&gt;
+                &lt;!--
+                ${config
+                    id   = mytemplate
+                }$ &nbsp;
+                --&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                Navigation goes here.
+                ${page}$&nbsp;
+                Footer goes here.
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </pre>
+    </div>
+</div>
+<div class="clearfix">
+    <p class="left-col">
+        The only thing left to do is to tell our page which template to use. To do so, we need to add a
+        <code>template</code> parameter to the config section of our page.<br>
+        For more details, have a look at the <a href="../reference/#template-markup-parameters">template markup reference</a>.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example: referencing a template from a page</span>
+        <pre class="brush: xml; highlight: [5]">
+            &lt;!--
+            ${config
+                id       = mypage
+                url      = /my-page/
+                template = mytemplate
+            }$ &nbsp;
+            --&gt;
+        </pre>
+    </div>
+</div>
+
+<h3 id="links">Snippets &ndash; Re-using Contained Markup</h3>
+<div class="clearfix">
+    <p class="left-col">
+        It is also quite common to have common pieces of markup <em>within</em> the content of different pages, e.g.
+        teaser boxes or code for advertising. You can outsource these into PHeasel snippets. Make sure your snippet
+        markup file contains the word <code>snip</code>, e.g. <code>snip.mysnippet.php</code> and assign an ID to your
+        snippet.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example: snippet markup</span>
+        <pre class="brush: xml; highlight: [5,6,7]">
+            &lt;!DOCTYPE HTML&gt;
+            &lt;html&gt;
+            &lt;head&gt;
+                &lt;!--
+                ${config
+                    id   = mysnippet
+                }$ &nbsp;
+                --&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                Snippet content goes here.
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </pre>
+    </div>
+</div>
+<div class="clearfix">
+    <p class="left-col">
+        You can reference snippets from pages, templates and even from other snippets.<br/>
+        For more details, have a look at the <a href="../reference/#snippet-markup-parameters">snippet markup reference</a>
+        and the <a href="../reference/snippet">snippet placeholder reference</a>.
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: xml; highlight: [2]">
+            &nbsp;
+            ${snippet id=mysnippet}$&nbsp;
+            &nbsp;
+        </pre>
+    </div>
+</div>
+
+<h2>Internationalisation (I18N) and Localisation (L10N)</h2>
+<p>
+    Translating a hand full of web pages to a second language is not hard: First duplicate, then translate.<br/>
+    But you probably have experienced that it can get very complex when the site grows more extensive, undergoes
+    structural changes or more languages need to be added. Prematurely localised websites often evolve into
+    huge constructs of duplication and eventually become confusing or even unmaintainable.<br/>
+    Decent internationalisation was one of the driving ideas behind PHeasel, and it comes with out-of-the-box
+    localisation support.
+</p>
+<h3>Markup Localisation</h3>
+<p>
+    <!--There are two ways to localise your markup files - the following example covers the easy way. It involves markup
+    duplication (yet in a structured manner). It is good for websites with a lot of textual content and clean,
+    semantic HTML markup. More complex user interfaces (e.g. web applications having more HTML markup than text in
+    the pages) are better <a href="../reference/localisation-with-ini-files">localised using INI files</a>.-->
+    The following example covers the easiest way to localise markup files with PHeasel. It involves markup
+    duplication (yet in a structured manner) and is ideal for websites with a lot of textual content and clean,
+    semantic HTML markup. For more complex user interfaces (e.g. web applications having more HTML markup than text in
+    the pages) a second way is in the making, which avoids markup duplication by having all messages strings in INI-files.
+    Expect it to be available within the next few weeks.
+</p>
+<div class="clearfix">
+    <div class="left-col">
+        Getting back to the example above, adding a translation of our page consists of three simple steps:<br/>
+        <strong>Step 1:</strong> Rename the page markup file to have <code>en</code> anywhere in the file name, again
+        separated with a dot, e.g. <code>page.mypagefilename.en.php</code>.<br>
+                Note: any separated two-letter sequence in the filename is assumed to be a language definition.<br/>
+        <strong>Step 2:</strong> Duplicate the file, using e.g. <code>de</code> instead of <code>en</code> in the filename e.g. <code>page.mypagefilename.de.php</code>.<br/>
+        <strong>Step 3:</strong> Translate the new file and choose an appropriate URL for it.<br>
+        Please note that the ID does not change.
+    </div>
+
+    <div class="right-col codesnippet">
+        <span class="caption">Example: page markup translated to German</span>
+        <pre class="brush: xml; highlight: [7,13]">
+            &lt;!DOCTYPE HTML&gt;
+            &lt;html&gt;
+            &lt;head&gt;
+                &lt;!--
+                ${config
+                    id       = mypage
+                    url      = /meine-seite/
+                    template = mytemplate
+                }$ &nbsp;
+                --&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                Seiteninhalt kommt hier hinein.
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </pre>
+    </div>
+</div>
+<h3>Advantages and Disadvantages of PHeasel I18N Concept</h3>
+<p>
+    You might ask yourself: <em>"How is the PHeasel approach any different from simply duplicating the complete website?"</em><br/>
+    Admittedly, in this simple example the differences are not very obvious, but there are some advantages (and maybe one
+    disadvantage, depending on your usage) compared to other I18N concepts:
+</p>
+<p>
+    <strong>File system independency:</strong> The markup files can be grouped in subdirectories to your liking. When
+    maintaining a multilingual website alone, it might be preferable to have the source language markup file side-by-side
+    with the translation files, so that changes can easily be adopted. However, if there are different translators for
+    different languages, it is convenient to have a directory per language, making it easier to find recent
+    changes in a specific language and what needs to be translated.
+</p>
+<p>
+    <strong>Locale-independent references:</strong> only the page ID is needed to create a link to it. You do not have
+    to think about URLs when copying a link from one language to another, PHeasel will sort this out for you.
+</p>
+<p>
+    <strong>Selective duplication:</strong> You do not have to duplicate all markup files - like in the example above,
+    you are free to have localized pages with non-localized snippets or templates. Which is totally fine in some cases,
+    e.g. when markup files simply do not contain any text. PHeasel will take care of falling back to the non-localized
+    markup if it cannot find a localized one.
+</p>
+<p>
+    <strong>Super-pretty URLs:</strong> your URLs are neither limited by the file system nor by a CMS/framework. Just
+    a short example: Less elegant solutions would force us to use URLs like<br>
+    <code>de.pheasel.org/getting-started/</code>,<br/> <code>pheasel.org/de/getting-started/</code> or <br/>
+    <code>pheasel.org/de/erste-schritte/</code> (somewhat better).<br/>
+    It is not that bad (and if you prefer: of course you can do that with PHeasel, too), but it can be better. The URL path should be localized ("getting-started" in English,
+    "erste-schritte" in German), and if it is, we do not need a two-character country code in the URL. Look at this:<br/>
+    <code>pheasel.org/getting-started/</code> (en) and <code>pheasel.org/erste-schritte/</code> (de).<br/>
+    That is catchier, isn't it?
+</p>
+<p>
+    But this procedure also introduces the <strong>possibility of cross-language URL naming conflicts</strong>: consider
+    mounting a multilingual download page, which would be called <code>/download/</code> in most of this world's
+    languages. That's the obvious drawback, but one can still resort to <code>/download-de/</code>, <code>/download/de/</code>,
+    or anything else.
+</p>
+<!--
+<h3 id="links">.</h3>
+<div class="clearfix">
+    <p class="left-col">
+
+
+    </p>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: xml; highlight: [5,6,7,8]">
+
+        </pre>
+    </div>
+</div>
+
+-->
+
+<script type="text/javascript">
+    $(function() {
+        SyntaxHighlighter.defaults['toolbar'] = false;
+        SyntaxHighlighter.all();
+    });
+</script>
+
+
+</div>
+<footer>
+    <div class="attribution">
+        <ul>
+            <li></li>
+            <li></li>
+            <!--<li>Hosted by <a href="http://github.com/">GitHub</a></li>
+            <li>Powered by <a href="http://pheasel.org/">PHeasel</a></li>-->
+            <li>&copy 2013 pheasel.org</li>
+        </ul>
+    </div>
+</footer>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-43430636-1', 'pheasel.org');
+    ga('send', 'pageview');
+
+</script>
+
+</body></html>

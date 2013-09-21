@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/pheasel.css"/>
+    <script type="text/javascript" src="../static/jquery-1.10.1.min.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
+
+
+    <script type="text/javascript" src="../static/shCore.js"></script>
+    <script type="text/javascript" src="../static/shBrushXml.js"></script>
+    <script type="text/javascript" src="../static/shBrushPhp.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/shCore.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/shThemeDefault.css"/>
+    <script>
+       /* $(document).ready(function(){
+            $('pre').snippet('html');
+        });*/
+    </script>
+    <style>
+
+        /*.codesnippet   {
+            width:33em;
+            float:left;
+            margin-right:20px;
+        }*/
+
+
+            /*p {
+                margin:auto;
+                width:33em;
+            }
+            h2 {
+                margin:auto;
+                width:22em;
+            }*/
+
+    </style>
+
+
+</head>
+<body>
+
+
+<nav class="clearfix">
+
+
+        <ul>
+        <li class="logo"><a href="../" title="Homepage"><img src="../static/pheasel-logo.png" alt="PHeasel logo" /></a></li>
+        <li ><a href="../features/">Features</a></li>
+        <li ><a href="../getting-started/">Getting Started</a></li>
+        <li ><a href="../reference/">Reference</a></li>
+        <li ><a href="../download/">Download</a></li>
+    </ul>
+    <div class="misc">
+        <a href="../impressum/" class="impressum" rel="nofollow">Impressum</a>
+    </div>
+</nav>
+<div id="main">
+
+
+
+<h1>Getting Started with PHeasel</h1>
+<h2>Installing PHeasel</h2>
+<p>
+    <a href="../download/">Download</a> the latest release and unzip it to the <code>htdocs</code> directory of your web server.
+</p>
+<aside >FYI: </aside>
+<!--<span class="sidenote">PHeasel can also be used in a subdirectory.</span>-->
+
+<h2>Creating your first page</h2>
+<p>
+    Your website will be living within the <code>site</code> subdirectory. Let's create a simple page in there: create
+    a new file and call it <code>page.first.php</code>. It is important to have <code>page</code> in the file name to
+    let PHeasel know that the file contains a page. You can also name it <code>first.page.php</code> if you prefer.
+</p>
+<div class="left-col codesnippet">
+    <span class="caption">File: page.first.php</span>
+    <pre class="brush: xml; highlight: [5,6,7,8,9]">
+        &lt;!DOCTYPE HTML&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;!--
+            ${${config
+                url  = /first/
+                id   = firstpage
+                name = First Page
+            }$
+            --&gt;
+            &lt;title&gt;My first page&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;h1&gt;Hello, welcome to the first page&lt;/h1&gt;
+        &lt;/body&gt;
+        &lt;/html&gt;
+    </pre>
+
+</div>
+<div class="right-col">
+    <p>
+        The page options are enclosed within <code>${config</code> and <code>}$</code>. <!--You can put it anywhere
+        in the markup file, but we recommend placing it on top or within the <code>&lt;head&gt;</code> section. This
+        part will not be included in the HTML output to your visitors, however if you prefer valid HTML in your
+        HTML editor, feel free to wrap it into an HTML comment.-->
+
+        <!--The configuration assigns an <code>id</code> called <code>home</code> to the page, makes it accessible at the web server's root directory (<code>/</code>) and gives it a suitable name: <code>Homepage</code>.-->
+    </p>
+    <ul style="list-style-type: disc">
+        <li><code>url</code>: the path where this page will be accessible on the webserver, e.g. on your local webserver the example page would be accessible at <code>http://localhost/first/</code></li>
+        <li><code>id</code> (optional): a unique identifier for this page, you will need it when creating links to this page, e.g. <code>firstpage</code></li>
+        <li><code>name</code> (optional): a short name for this page, can be used for link labels, espacially in generated components like sitemaps or navigation elements</li>
+    </ul>
+    <a href="../reference/#page-markup-parameters">More about page markup options</a>
+</div>
+<div style="clear:both"></div>
+
+
+<a name="linking-pages"></a><h2>Linking pages</h2>
+<p>Let's create a second page, so that we have a place to link to the page above:</p>
+<div class="left-col codesnippet">
+    <span class="caption">File: page.second.php</span>
+    <pre class="brush: xml; highlight: [14]">
+    &lt;!DOCTYPE HTML&gt;
+    &lt;html&gt;
+    &lt;!-- pheasel
+    url  = /second/
+    id   = secondpage
+    name = Second Page
+    /pheasel --&gt;
+    &lt;head&gt;
+        &lt;title&gt;My second page&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;This is the second page&lt;/h1&gt;
+        Take me to the first:
+        &lt;a href="${url pageid=firstpage}$"&gt;${pagename}$&lt;/a&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    </pre>
+</div>
+<div class="right-col">
+    <p>
+        Again, we have assigned <code>url</code>, <code>id</code> and <code>name</code> in the page configuration. We have also added a link back to our first page:
+    </p>
+    <ul style="list-style-type: disc">
+        <li><code>${url pageid=firstpage}$</code> inserts the (relative) link to the page with id <code>firstpage</code>, in our example this is <code>/first/</code>.</li>
+        <li><code>${pagename}$</code> will always be replaced with the name of the last page that a link has been generated for, in this case <code>First page</code>.
+            Of course you can insert any other text instead, but doing it this way will make work with navigational components a lot easier.
+        </li>
+    </ul>
+</div>
+<div style="clear:both"></div>
+<div class="hint">
+    <h3>BTW: PHeasel placeholders</h3>
+    <p>
+        As you can see in the example above, some patterns in your markup are processed by PHeasel and replaced with something else.
+        By default, these patterns start with <code>${</code> and end with <code>}$</code>. If you actually need to display these character
+        combinations in your page (e.g. when creating a PHeasel tutorial page :)), you can escape them like this: <code>$&#39;{</code> and <code>}&#39;$</code>.<br/>
+        If these are completely in your way (maybe because another tool you use has similar patterns), you can change
+        them in <code>pheasel_config.php</code>. That said, be sure to read the comments in there.
+    </p>
+</div>
+
+<h2>Using templates</h2>
+<p>
+    Templates are a good way to re-use markup that wraps your page content on several pages, e.g. navigation or footer elements.
+</p>
+<div class="left-col codesnippet">
+    <span class="caption">File: tmpl.main.php</span>
+    <pre class="brush: xml; highlight: [4,11]">
+    &lt;!DOCTYPE HTML&gt;
+    &lt;html&gt;
+    &lt;!-- pheasel
+    id   = main
+    /pheasel --&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8"/&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+    &lt;div class="header"&gt;Navigation go here&lt;/div&gt;
+    ${page}$
+    &lt;div class="footer"&gt;Footer links go here&lt;/div&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    </pre>
+</div>
+<div class="right-col">
+    <p>
+        A template file needs to have <code>tmpl</code> in the filename, we call ours <code>tmpl.main.php</code>.<br/>
+        There is not much to configure within the template:
+    </p>
+    <ul style="list-style-type: disc">
+        <li><code>id</code> (optional): a unique identifier for this template, you will need it to assign it to your pages, e.g. <code>main</code></li>
+        <li><code>${page}$</code> inserts the actual page content of the requested page</li>
+    </ul>
+</div>
+
+<div class="left-col codesnippet">
+    <span class="caption">File: page.first.php (excerpt)</span>
+    <pre class="brush: xml; highlight: [6]">
+    [...]
+    &lt;!-- pheasel
+    url      = /first/
+    id       = firstpage
+    name     = First Page
+    template = main
+    /pheasel --&gt;
+    [...]
+    </pre>
+
+</div>
+<div class="right-col">
+    <p>
+       You still need to reference the template from the page to be wrapped by it. Just add<br/>
+       <code>template = main</code><br/>
+       to the configuration section of any page that should be using the template.
+    </p>
+</div>
+
+<div style="clear:both"></div>
+<p>
+    Noteworthy: if you have a look at the resulting page's source, you will see that it's <code>&lt;head&gt;</code>
+    section contains the template's <strong>and</strong> the page's <code>&lt;head&gt;</code> content.
+</p>
+
+
+
+
+
+<script type="text/javascript">
+$(function() {
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all();
+
+    var $hintheads = $('.hint h3');
+    //var $hintheads = $hints.find()
+    $hintheads.on('click', function(){
+        $(this).parent().toggleClass('collapsed');
+    });
+    // TODO uncomment the following line
+    //$hintheads.parent().toggleClass('collapsed');
+});
+</script>
+
+
+</div>
+<footer>
+    <div class="attribution">
+        <ul>
+            <li></li>
+            <li></li>
+            <!--<li>Hosted by <a href="http://github.com/">GitHub</a></li>
+            <li>Powered by <a href="http://pheasel.org/">PHeasel</a></li>-->
+            <li>&copy 2013 pheasel.org</li>
+        </ul>
+    </div>
+</footer>
+
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-43430636-1', 'pheasel.org');
+    ga('send', 'pageview');
+
+</script>
+
+</body></html>
