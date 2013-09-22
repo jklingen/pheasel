@@ -1,0 +1,44 @@
+/**
+ * PHeasel - a lightweight and simple PHP website development kit
+ *
+ * Copyright 2013 Jens Klingen
+ *
+ * For more information see: http://pheasel.org/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#pheasel-devbar {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2em;
+    color: #fff;
+    font-size: 0.75em;
+    background-color: #530;
+    line-height: 1.9em;
+    font-family: sans-serif;
+}
+
+#pheasel-devbar-control {
+    float: left;
+    padding-left: 10px;
+
+}
+
+img.logo {
+    position: relative;
+    left: 1.4em;
+    height: 2em;
+    cursor:pointer;
+}

@@ -276,13 +276,16 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function render_developer_bar($page_size) {
+        $collapse_attr = $_COOKIE['pheasel_devbar_collapsed']?'style="display:none;"':'';
         return  '
-            <div id="pheasel-devbar" style="z-index:9999;position:fixed;top:0;left:0;height:2em;color:#fff;font-size:0.75em;background-color:#530;line-height:1.9em;font-family:sans-serif;">
-                <div id="pheasel-devbar-control" style="float:left;padding-left:10px;">
-                <sptan style="color:#fffaee">PHeasel developer bar |</span>
-                Page size: ~ '.$this->format_bytes($page_size,1).'B
+            <link rel="stylesheet" href="'.get_resource_url('/pheasel/resources/pheasel-devbar.css').'"/>
+            <script src="'.get_resource_url('/pheasel/resources/pheasel-devbar.js').'"></script>
+            <div id="pheasel-devbar">
+                <div id="pheasel-devbar-control" '.$collapse_attr.'>
+                    <strong>PHeasel developer bar</strong> |
+                    Page size: ~ '.$this->format_bytes($page_size,1).'B
                 </div>
-                <span onclick="var c=document.getElementById(\'pheasel-devbar-control\');c.style.display=(c.style.display!=\'none\')?\'none\':\'inline\';" style="cursor:pointer;"><img style="height:2em;position:relative;left:1.4em;" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/></span>
+                <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/>
             </div>';
     }
 
