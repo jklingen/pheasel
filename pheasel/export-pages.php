@@ -51,7 +51,8 @@ if($export_single) {
     clear_export_dir();
 }
 
-echo "Starting export of ".count($urls)." page(s) as $mode.\n";
+echo "<strong>Starting export of pages from ".PHEASEL_PAGES_DIR.".</strong>\n";
+echo count($urls)." page(s) will be exported as $mode.\n";
 
 foreach($urls as $url) {
     echo " * $url";
