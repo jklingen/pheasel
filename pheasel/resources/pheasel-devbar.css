@@ -23,7 +23,7 @@
     top: 0;
     left: 0;
     height: 2em;
-    color: #fff;
+    color: #ccc;
     font-size: 0.75em;
     background-color: #530;
     line-height: 1.9em;
@@ -41,4 +41,22 @@ img.logo {
     left: 1.4em;
     height: 2em;
     cursor:pointer;
+}
+
+#pheasel-devbar button,
+#pheasel-devbar input {
+    border:0;
+    margin:0;
+    padding:0;
+    background:none;
+    font-family: sans-serif;
+    color:#fff;
+    font-size:1em;
+    font-weight:bold;
+    text-decoration: underline;
+    cursor:pointer;
+}
+
+#pheasel-devbar input {
+    width:3em;
 }

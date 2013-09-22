@@ -276,15 +276,20 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function render_developer_bar($page_size) {
-        $collapse_attr = $_COOKIE['pheasel_devbar_collapsed']?'style="display:none;"':'';
+        $collapse_attr = get_cookie('pheasel_devbar_collapsed')?'style="display:none;"':'';
+        $export_mode = get_cookie('pheasel_devbar_export_php')?'PHP':'HTML';
         return  '
             <link rel="stylesheet" href="'.get_resource_url('/pheasel/resources/pheasel-devbar.css').'"/>
             <script src="'.get_resource_url('/pheasel/resources/pheasel-devbar.js').'"></script>
             <div id="pheasel-devbar">
-                <div id="pheasel-devbar-control" '.$collapse_attr.'>
+                <form id="pheasel-devbar-control" '.$collapse_attr.' method="GET" action="'.get_resource_url('/pheasel/export-pages.php').'" target="pheaselexport">
                     <strong>PHeasel developer bar</strong> |
-                    Page size: ~ '.$this->format_bytes($page_size,1).'B
-                </div>
+                    Export as <input type="text" name="mode" value="'.$export_mode.'" onclick="this.value=(this.value==\'PHP\')?\'HTML\':\'PHP\';this.blur();" onfocus="this.blur()";/>:
+                    <button type="submit" name="exportall" value="true">all pages</button>
+                    <button type="submit" name="exportsingle" value="'.PageInfo::$current->url.'">this page</button>
+                    |
+                    Markup size: ~ '.$this->format_bytes($page_size,1).'B
+                </form>
                 <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/>
             </div>';
     }
