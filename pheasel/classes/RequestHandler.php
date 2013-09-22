@@ -230,6 +230,12 @@ class RequestHandler extends AbstractLoggingClass {
         return $ret;
     }
 
+    /**
+     * Looks for files named e.g. all.inc.php, all.ini, <lang>.inc.php or <lang>.ini along
+     * the directory structure and includes/parses them. Same goes for <filename>.inc.php and <filename>.ini (where
+     * <filename> is the name of the markup file.
+     * @param $file
+     */
     private function hierarchy_include($file) {
         $path_info = pathinfo($file);
 
