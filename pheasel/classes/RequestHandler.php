@@ -276,11 +276,13 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function render_developer_bar() {
-        return  '<div id="pheasel-devbar" style="z-index:9999;position:absolute;top:300px;left:0;padding:0 3px; color:#fff;font-size:0.75em;cursor:pointer;background-color:#530;">
-        <span id="pheasel-devbar-control">asdf</span>
-            <span onclick="var c=document.getElementById(\'pheasel-devbar-control\');c.style.display=(c.style.display!=\'none\')?\'none\':\'inline\';">PHeasel&nbsp;»</span>
-        </div>';
-
+        return  '
+            <div id="pheasel-devbar" style="z-index:9999;position:fixed;top:0;left:0;height:2em;color:#fff;font-size:0.75em;background-color:#530;line-height:1.9em;font-family:sans-serif;">
+                <div id="pheasel-devbar-control" style="float:left;padding-left:10px;">
+                PHeasel developer bar
+                </div>
+                <span onclick="var c=document.getElementById(\'pheasel-devbar-control\');c.style.display=(c.style.display!=\'none\')?\'none\':\'inline\';" style="cursor:pointer;"><img style="height:2em;position:relative;left:1.4em;" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/></span>
+            </div>';
     }
 
 
