@@ -283,11 +283,12 @@ class RequestHandler extends AbstractLoggingClass {
             <script src="'.get_resource_url('/pheasel/resources/pheasel-devbar.js').'"></script>
             <div id="pheasel-devbar">
                 <form id="pheasel-devbar-control" '.$collapse_attr.' method="GET" action="'.get_resource_url('/pheasel/export-pages.php').'" target="pheaselexport">
-                    <strong>PHeasel developer bar</strong> |
+                    <strong>PHeasel developer bar</strong>
+                    &nbsp;|&nbsp;
                     Export as <input type="text" name="mode" value="'.$export_mode.'" onclick="this.value=(this.value==\'PHP\')?\'HTML\':\'PHP\';this.blur();" onfocus="this.blur()";/>:
                     <button type="submit" name="exportall" value="true">all pages</button>
                     <button type="submit" name="exportsingle" value="'.PageInfo::$current->url.'">this page</button>
-                    |
+                    &nbsp;|&nbsp;
                     Markup size: ~ '.$this->format_bytes($page_size,1).'B
                 </form>
                 <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/>
