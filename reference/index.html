@@ -10,6 +10,8 @@
     <script type="text/javascript" src="../static/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" src="../static/syntaxhighlighter.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/syntaxhighlighter.css"/>
+    <title>Reference: PHeasel markup configuration parameters and placeholders</title>
+    <meta name="description" content="Compact reference to look up markup configuration parameters and placeholders of PHeasel."/>
 
 
 </head>
@@ -219,22 +221,24 @@ with a piece of dynamic information, e.g. a relative URL to another page.
 <div class="clearfix">
     <p class="left-col">
         Anchor placeholders are useful if you want to internationalise the part after the hash (<code>#</code>) symbol
-        of a URL
-        Similar to the URL placeholder, the resource placeholder is used to create a reference, just for static resources
-        like external style sheets, javascript or images. Requests to static resources are waved through directly by PHeasel, so
-        in theory you could as well just reference an image within the <code>site/static/</code> directory like
-        <code>/static/logo.png</code>. However, using the resource placeholder gives you more flexibity, especially if
-        your PHeasel site is not located directly in the document root of your web server.
+        of a URL. When adding an <code>${anchor id=anyid}$</code>
+        placeholder to your page, you can localise it by adding <code>anchor.anyid=my-anchor-text</code> to the page
+        markup configuration section.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
         <pre class="brush: xml; highlight: [2]">
             &lt;h3 id="${anchor id=myheadline}$"&gt;My Headline&lt;/a&gt;
         </pre>
-        <span class="caption" >The link above would be rendered e.g. like</span>
+        <span class="caption" >The link to the anchor above could be rendered e.g. like</span>
         <pre class="brush: xml;">
             &lt;a href="my-page/#my-headline"&gt;My Headline&lt;/a&gt; &lt;!-- (en) or --&gt;
             &lt;a href="meine-seite/#meine-ueberschrift"&gt;Meine &Uuml;berschrift&lt;/a&gt; &lt;!-- (de) --&gt;
+        </pre>
+        <span class="caption" >if the page markup configuration includes e.g. one of</span>
+        <pre class="brush: xml;">
+            anchor.myheadline=my-headline
+            anchor.myheadline=meine-ueberschrift
         </pre>
     </div>
 </div>
