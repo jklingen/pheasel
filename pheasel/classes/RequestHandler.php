@@ -88,7 +88,7 @@ class RequestHandler extends AbstractLoggingClass {
         $ret .= '</head>';
         $ret .= $this->body_markup;
         if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
-            $ret .= $this->render_developer_bar();
+            $ret .= $this->render_developer_bar(strlen($ret) + 14); // +14 for closing HTML
         }
         $ret .= '</body></html>';
         // if no one demands otherwise, we output pure HTML
@@ -275,14 +275,21 @@ class RequestHandler extends AbstractLoggingClass {
         }
     }
 
-    private function render_developer_bar() {
+    private function render_developer_bar($page_size) {
         return  '
             <div id="pheasel-devbar" style="z-index:9999;position:fixed;top:0;left:0;height:2em;color:#fff;font-size:0.75em;background-color:#530;line-height:1.9em;font-family:sans-serif;">
                 <div id="pheasel-devbar-control" style="float:left;padding-left:10px;">
-                PHeasel developer bar
+                <sptan style="color:#fffaee">PHeasel developer bar |</span>
+                Page size: ~ '.$this->format_bytes($page_size,1).'B
                 </div>
                 <span onclick="var c=document.getElementById(\'pheasel-devbar-control\');c.style.display=(c.style.display!=\'none\')?\'none\':\'inline\';" style="cursor:pointer;"><img style="height:2em;position:relative;left:1.4em;" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/></span>
             </div>';
+    }
+
+    private function format_bytes($size, $precision = 2) {
+        $base = log($size) / log(1024);
+        $suffixes = array('', 'K', 'M', 'G', 'T');
+        return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
     }
 
 
