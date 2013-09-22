@@ -1,13 +1,13 @@
 ${config
 id=   pheaselintro
-url=  /
+url=  /intro/
 name= Intro
 }$
 <html>
 <head>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="${resource url=/static/favicon.ico}$"/>
-    <title>PHeasel is up and running</title>
+    <title>PHeasel is up and running, yeah.</title>
     <style>
         body {
             font-family:Helvetica, Arial, sans-serif;
