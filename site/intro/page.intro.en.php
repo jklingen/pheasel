@@ -78,7 +78,7 @@ name= Intro
     <p>
         Find the local working directory for your site at <code><?=PHEASEL_PAGES_DIR?></code>
     </p>
-    <p>Thanks for using PHeasel. Have fun.</p>
+    <p>Thanks for using PHeasel - have fun.</p>
 </div>
 
 
