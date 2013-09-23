@@ -70,7 +70,7 @@ name= Intro
 <div class="bottom">
     <h1>Yay!</h1>
     <h2>PHeasel is up and running,<br/>ready for you to get started.</h2>
-    <img src="${resource url=/static/pheasel-logo.png}$">
+    <img src="${resource url=/pheasel/resources/pheasel-logo.png}$">
     <p>
         You should have a look at our <a href="http://pheasel.org/getting-started/?ref=intro">getting started guide</a> first, if you haven't yet.<br/>
         Consult the <a href="http://pheasel.org/reference/?ref=intro">online reference</a> for more detailed information.
