@@ -75,10 +75,11 @@ class RequestHandler extends AbstractLoggingClass {
                 header("HTTP/1.1 301 Moved Permanently");
                 header("Location: ".$_SERVER["REQUEST_URI"].'/');
                 exit;
-            } else {
-                throw new PageNotFoundException("No page could be found for $relative_url");
-            }
+            } 
         }
+		if($pageInfo == null) {
+			throw new PageNotFoundException("No page could be found for $relative_url");
+		}
 
 
         PageInfo::$current = $pageInfo;
