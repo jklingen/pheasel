@@ -125,6 +125,11 @@ class SiteConfigWriter extends AbstractLoggingClass {
     }
 
     function write_xml() {
+		$pi = pathinfo(PHEASEL_FILES_CACHE);
+		if(!file_exists($pi['dirname'])) {
+			$this->info("Cache directory does not exist - creating it at ".$pi['dirname']);
+			mkdir($pi['dirname']);
+		}
         $this->info("Writing markup cache to ".PHEASEL_FILES_CACHE);
         $this->root_node->asXml(PHEASEL_FILES_CACHE);
     }
