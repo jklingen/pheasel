@@ -1,6 +1,6 @@
 ${config
 id=   pheaselintro
-url=  /intro/
+url=  /
 name= Intro
 }$
 <html>
