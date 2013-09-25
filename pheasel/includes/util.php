@@ -54,5 +54,5 @@ function get_cookie($name) {
  * @return mixed value of the array element, or $default if it does not exist
  */
 function get_from_array($array, $name, $default = null) {
-    return isset($array[$name]) ? $array[$name] : $default;;
+    return isset($array[$name]) ? $array[$name] : $default;
 }
