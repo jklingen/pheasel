@@ -209,7 +209,7 @@ class RequestHandler extends AbstractLoggingClass {
             case 'config': return "";
             case 'msg': return isset($this->messages[$attrs['code']])?$this->messages[$attrs['code']]:NULL;
             case 'resource': return get_resource_url($attrs['url']);
-            case 'url': return get_link_url($attrs['pageid']);
+            case 'url': return get_link_url($attrs['pageid'], get_from_array($attrs, 'lang'));
             case 'pagename': return get_page_name(isset($attrs['pageid'])?$attrs['pageid']:NULL);
             case 'page': $this->include_current_page(); return "";
             case 'snippet': $this->include_snippet($attrs['id']); return "";

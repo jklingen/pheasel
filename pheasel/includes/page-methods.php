@@ -22,7 +22,7 @@
 $last_link_target_page_info = null;
 
 // TODO we should move this somewhere else, it is used by RequestHandler
-function get_link_url($page_id) {
+function get_link_url($page_id, $lang = null) {
     global $last_link_target_page_info;
     $anchor = NULL;
     if(strpos($page_id,"#") !== false) {
@@ -32,7 +32,7 @@ function get_link_url($page_id) {
         $anchor = $hs[1];
     }
     if(strlen($page_id)==0) $page_id = PageInfo::$current->id;
-    $last_link_target_page_info = SiteConfig::get_instance()->get_page_info($page_id);
+    $last_link_target_page_info = SiteConfig::get_instance()->get_page_info($page_id, $lang);
     $target_uri = $last_link_target_page_info->url;
     $current_uri = PageInfo::$current->url;
     if(isset($last_link_target_page_info->data["anchor.".$anchor])) {
