@@ -30,7 +30,6 @@ require_once(PHEASEL_ROOT . "/includes/page-methods.php");
 
 class RequestHandler extends AbstractLoggingClass {
 
-
     static private $unique_instance = null;
 
     static public function get_instance() {
@@ -75,7 +74,7 @@ class RequestHandler extends AbstractLoggingClass {
                 header("HTTP/1.1 301 Moved Permanently");
                 header("Location: ".$_SERVER["REQUEST_URI"].'/');
                 exit;
-            } 
+            }
         }
 		if($pageInfo == null) {
 			throw new PageNotFoundException("No page could be found for $relative_url");
@@ -256,11 +255,23 @@ class RequestHandler extends AbstractLoggingClass {
             // e.g. en.ini in current directory
             $this->try_parse_ini($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.ini');
 
-            if(isset($path_info['extension'])) { // not for directories or files withcout extension
+            if(isset($path_info['extension'])) { // not for directories or files without extension
+                $path_without_extension = $path_info['dirname'] . DIRECTORY_SEPARATOR . $path_info['filename'];
+
+                if(!strpos($path_info['filename'], PageInfo::$current->lang)) {
+                    // markup file does not seem to be I18Ned, look out for L10N ini file}
+
+                    // e.g. index.inc.en.php nefore loading index.php
+                    $this->try_include($path_without_extension . '.inc.' . PageInfo::$current->lang . '.' . $path_info['extension']);
+
+                    // e.g. index.en.ini nefore loading index.php
+                    $this->try_parse_ini($path_without_extension . '.' . PageInfo::$current->lang .  '.ini');
+                }
+
                 // e.g. index.en.inc.php nefore loading index.en.php
-                $this->try_include($path_info['dirname'] . DIRECTORY_SEPARATOR .  $path_info['filename'] . '.inc.' . $path_info['extension']);
+                $this->try_include($path_without_extension . '.inc.' . $path_info['extension']);
                 // e.g. index.en.ini nefore loading index.en.php
-                $this->try_parse_ini($path_info['dirname'] . DIRECTORY_SEPARATOR .  $path_info['filename'] . '.ini');
+                $this->try_parse_ini($path_without_extension . '.ini');
             }
         }
     }
@@ -275,10 +286,11 @@ class RequestHandler extends AbstractLoggingClass {
 
     public function try_parse_ini($file) {
         $parsed = false;
-        if(is_file($file)) $parsed = parse_ini_file($file);
+        if(is_file($file)) $parsed = parse_ini_file($file, true);
 
         if($parsed && count($parsed) > 0) {
-            $this->messages = array_merge($this->messages, $parsed);
+            if(isset($parsed['messages']) && count($parsed['messages']) > 0) $this->messages = array_merge($this->messages, $parsed);
+            if(isset($parsed['config']) && count($parsed['config']) > 0) $this->messages = array_merge($this->messages, $parsed);
         }
     }
 
