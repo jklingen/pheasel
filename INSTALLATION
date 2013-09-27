@@ -1,7 +1,18 @@
 1. Extract the ZIP to the htdocs directory of your local web server (or to a subdirectory)
 
-2. Start your web server (if it is not running yet) and see http://localhost/ for more information (if you have used a
-   subdirectory in step 1, append it to the URL)
+2. Unsually that's all. Start your web server (if it is not running yet) and 
+   see http://localhost/ for more information (if you have used a subdirectory 
+   in step 1, append it to the URL).
+   
+If you cannot see PHeasel's intro page yet, you might have to tweak one or another thing,
+depending on your environment and web server configuration. Please make sure that
+
+ * PHP is installed
+ * mod_rewrite is enabled and AllowOverride is set to All
+ * the web server has write access to the following subdirectories:
+   * pheasel/cache
+   * pheasel/logs
+   * site-export
 
 =======
 
