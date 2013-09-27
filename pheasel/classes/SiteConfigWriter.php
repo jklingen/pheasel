@@ -63,15 +63,29 @@ class SiteConfigWriter extends AbstractLoggingClass {
         while($it->valid()) {
             $current = $it->current();
             // no need to process static directory
-            if(strpos($current,PHEASEL_PAGES_DIR . 'static') !== 0 && substr($current, -4) != ".ini" && substr($current, -8) != ".inc.php"  ) {
+            if(strpos($current,PHEASEL_PAGES_DIR . 'static') !== 0 && $this->has_valid_markup_file_extension($current)) {
                 $this->trace("Parsing potential markup file: $current");
                 $this->parse_file($current);
             } else {
-                $this->trace("Ignoring static file: $current");
+                $this->trace("Ignoring static file or file with wrong extension: $current");
             }
             $it->next();
         }
         $this->write_xml();
+    }
+
+    /**
+     * Valid markup file extensions are .php (but not .inc.php), .htm, .html, .css and .js
+     * @param $filename string filename to check
+     * @return bool whether the filename has one of the valid extensions for markup files
+     */
+    function has_valid_markup_file_extension($filename) {
+        $last4 = substr($filename, -4);
+        if($last4 == '.php' && substr($filename, -8) != ".inc.php") return true;
+        if($last4 == '.htm' || $last4 == '.css') return true;
+        if(substr($filename, -5) == '.html') return true;
+        if(substr($filename, -3) == '.js') return true;
+        return false;
     }
 
     function parse_file($path) {
@@ -125,11 +139,6 @@ class SiteConfigWriter extends AbstractLoggingClass {
     }
 
     function write_xml() {
-		$pi = pathinfo(PHEASEL_FILES_CACHE);
-		if(!file_exists($pi['dirname'])) {
-			$this->info("Cache directory does not exist - creating it at ".$pi['dirname']);
-			mkdir($pi['dirname']);
-		}
         $this->info("Writing markup cache to ".PHEASEL_FILES_CACHE);
         $this->root_node->asXml(PHEASEL_FILES_CACHE);
     }
