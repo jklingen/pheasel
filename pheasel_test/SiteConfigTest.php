@@ -68,10 +68,8 @@ class SiteConfigTest extends PheaselTestCase {
     }
 
     public function testPageNotFound() {
-        try {
-            SiteConfig::get_instance()->get_page_info("non-existent-id");
-            $this->fail("Requested non-existent page, but got no exception.");
-        } catch(PageNotFoundException $e) {}
+        $pi = SiteConfig::get_instance()->get_page_info("non-existent-id");
+        $this->assertNull($pi);
     }
 
 
