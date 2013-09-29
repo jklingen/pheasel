@@ -123,6 +123,7 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     public function include_snippet($id) {
+        $this->debug("Including snippet $id");
         $this->read_markup_file(PHEASEL_PAGES_DIR.SiteConfig::get_instance()->get_snippet_info($id)->file);
     }
 
@@ -240,20 +241,20 @@ class RequestHandler extends AbstractLoggingClass {
         $path_info = pathinfo($file);
 
         if(!$this->rendering) {
-            // TODO check whether this is safe in other environments
+            // TODO consider iterating from PHEASEL_PAGES_DIR down instead from markup file up
             if($path_info['dirname'] . DIRECTORY_SEPARATOR != PHEASEL_PAGES_DIR) {
                 $this->hierarchy_include($path_info['dirname']);
             }
 
             // e.g. all.inc.php in current directory
-            $this->try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.inc.php');
+            try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.inc.php');
             // e.g. all.ini in current directory
-            $this->try_parse_ini($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.ini');
+            $this->find_ini_messages($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.ini');
 
             // e.g. en.inc.php in current directory
-            $this->try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.inc.php');
+            try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.inc.php');
             // e.g. en.ini in current directory
-            $this->try_parse_ini($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.ini');
+            $this->find_ini_messages($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.ini');
 
             if(isset($path_info['extension'])) { // not for directories or files without extension
                 $path_without_extension = $path_info['dirname'] . DIRECTORY_SEPARATOR . $path_info['filename'];
@@ -262,35 +263,29 @@ class RequestHandler extends AbstractLoggingClass {
                     // markup file does not seem to be I18Ned, look out for L10N ini file}
 
                     // e.g. index.inc.en.php nefore loading index.php
-                    $this->try_include($path_without_extension . '.inc.' . PageInfo::$current->lang . '.' . $path_info['extension']);
+                    try_include($path_without_extension . '.inc.' . PageInfo::$current->lang . '.' . $path_info['extension']);
 
                     // e.g. index.en.ini nefore loading index.php
-                    $this->try_parse_ini($path_without_extension . '.' . PageInfo::$current->lang .  '.ini');
+                    $this->find_ini_messages($path_without_extension . '.' . PageInfo::$current->lang .  '.ini');
                 }
 
                 // e.g. index.en.inc.php nefore loading index.en.php
-                $this->try_include($path_without_extension . '.inc.' . $path_info['extension']);
+                try_include($path_without_extension . '.inc.' . $path_info['extension']);
                 // e.g. index.en.ini nefore loading index.en.php
-                $this->try_parse_ini($path_without_extension . '.ini');
+                $this->find_ini_messages($path_without_extension . '.ini');
             }
         }
     }
 
     /**
-     * include file if exists
+     * parse ini file if exists, do nothing otherwise
      * @param $file
      */
-    public function try_include($file) {
-        if(is_file($file)) include $file;
-    }
-
-    public function try_parse_ini($file) {
-        $parsed = false;
-        if(is_file($file)) $parsed = parse_ini_file($file, true);
+    public function find_ini_messages($file) {
+        $parsed = try_parse_ini($file);
 
         if($parsed && count($parsed) > 0) {
             if(isset($parsed['messages']) && count($parsed['messages']) > 0) $this->messages = array_merge($this->messages, $parsed);
-            if(isset($parsed['config']) && count($parsed['config']) > 0) $this->messages = array_merge($this->messages, $parsed);
         }
     }
 

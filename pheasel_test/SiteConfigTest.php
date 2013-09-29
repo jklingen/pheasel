@@ -53,6 +53,17 @@ class SiteConfigTest extends PheaselTestCase {
         $this->assertEquals($pi2->lang, "en");
     }
 
+    public function testGetPagesWithIniConfig() {
+        $pi = SiteConfig::get_instance()->get_page_info("conf-in-ini", "de");
+        $this->assertEquals($pi->lang,"de");
+        $this->assertEquals($pi->url,"/konfig-in-ini-datei/");
+
+        $pi = SiteConfig::get_instance()->get_page_info("conf-in-ini", "en");
+        $this->assertEquals($pi->lang,"en");
+        $this->assertEquals($pi->url,"/config-in-ini-file/");
+
+    }
+
     public function testGetTranslations() {
         $pi1 = SiteConfig::get_instance()->get_page_info("id-in-comment","de");
         PageInfo::$current = $pi1;

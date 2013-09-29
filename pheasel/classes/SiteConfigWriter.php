@@ -101,14 +101,18 @@ class SiteConfigWriter extends AbstractLoggingClass {
                 $ph = new Placeholder($placeholder); // 1st group should be without prefix and suffix
                 $attrs = $ph->attributes;
                 if($ph->name=='config' && !is_null($attrs)) {
-                    // TODO needs cleanup!
-                    $attrs["file"] = str_replace(DIRECTORY_SEPARATOR, "/", substr($path, strlen(PHEASEL_PAGES_DIR))); // make sure the paths work in linux environment even when generated on windows pc
+                    $relative_path = substr($path, strlen(PHEASEL_PAGES_DIR));
+                    $attrs["file"] = str_replace(DIRECTORY_SEPARATOR, "/", $relative_path); // make sure the paths work in linux environment even when generated on windows pc
                     $this->debug("Markup file configuration found for ".$attrs["file"]);
+
                     $pathparts = explode("/",$attrs["file"]);
                     $filenameparts = explode(".", array_pop($pathparts));
+
                     $filenameparts_for_id = array(); // will generate ID from filename if none is defined in the file
-                    array_pop($filenameparts); // we do not care about the extension
-                    $type = NULL;
+                    array_pop($filenameparts); // we do not care about the extension for the ID
+
+                    // populate some markup config parameters from filename (language and markup type)
+                    $type = null;
                     foreach($filenameparts as $i=>$filenamepart) {
                         if(empty($attrs["lang"]) && strlen($filenamepart) == 2) { // 2 chars is assumed to be language (if not already set)
                             $attrs["lang"] = $filenamepart;
@@ -125,16 +129,69 @@ class SiteConfigWriter extends AbstractLoggingClass {
                     }
                     $attrs["modified"] = date("Y-m-d H:i:s", filemtime($path));
 
-                    $target_node = NULL;
-                    if($type=="page") $target_node = $this->pages_node;
-                    else if($type=="snip") $target_node = $this->snippets_node;
-                    else if($type=="tmpl") $target_node = $this->templates_node;
-                    $my_node = $target_node->addChild("item"); //new SimpleXMLElement("<item/>");
-                    foreach($attrs as $k=>$v) {
-                        $my_node->addAttribute($k, $v);
+                    $file_registered = false;
+                    if(empty($attrs["lang"])) {
+                        $pi = pathinfo($path);
+                        $glob_pattern = $pi['dirname'] . DIRECTORY_SEPARATOR . $pi['filename'] . '.??.ini';
+                        $this->trace("Looking for L10N ini files: " . $glob_pattern);
+                        foreach(glob($pi['dirname'] . DIRECTORY_SEPARATOR . $pi['filename'] . '.??.ini', GLOB_NOSORT ) as $inifile) {
+                            $ini_attrs = $this->extend_attrs_from_ini($attrs, $inifile);
+                            $this->debug("Registering markup file with INI localisation" .$ini_attrs["file"] . "(".$pi['filename'].")");
+                            $this->create_markup_file_node($type, $ini_attrs);
+                            $file_registered = true;
+                        }
                     }
+                    // if there is no localisation, we assume that there is nothing to localise and accept missing lang
+                    if(!$file_registered) {
+                        $this->debug("Registering localised markup file " . $attrs["file"]);
+                        $this->create_markup_file_node($type, $attrs);
+                    }
+
                 }
             }
+        }
+    }
+
+    /**
+     * Extends procided attributes with config parameters from INI file
+     * @param $attrs array attributes as loaded from markup file
+     * @param $inifile string the ini file to extend from
+     * @return array extended attributes
+     */
+    private function extend_attrs_from_ini($attrs, $inifile)
+    {
+        $ini_attrs = $attrs;
+        $parsed_ini = try_parse_ini($inifile);
+        $ini_config = get_from_array($parsed_ini, 'config');
+        if ($ini_config) {
+            $this->debug("Found config section");
+            $url = get_from_array($ini_config, 'url');
+            $name = get_from_array($ini_config, 'name');
+
+            if (!isset($ini_attrs['url'])) $ini_attrs['url'] = $url;
+            if (!isset($ini_attrs['name'])) $ini_attrs['name'] = $name;
+
+            $ini_name_parts = explode('.', $inifile);
+            $ini_attrs['lang'] = $ini_name_parts[count($ini_name_parts) - 2];
+            return $ini_attrs;
+        }
+        return $ini_attrs;
+    }
+
+    /**
+     * Creates a child node depending on type and adds attributes to it.
+     * @param $type string page|snip|tmpl
+     * @param $attrs array of attributes for the markup file
+     * @throws Exception if type cannot be processed
+     */
+    private function create_markup_file_node($type, $attrs) {
+        if ($type == "page") $my_node = $this->pages_node->addChild("item");
+        else if ($type == "snip") $my_node = $this->snippets_node->addChild("item");
+        else if ($type == "tmpl") $my_node = $this->templates_node->addChild("item");
+        else throw new Exception("Markup type $type could not be processed. The file name should contain either page, tmpl or snip.");
+
+        foreach ($attrs as $k => $v) {
+            $my_node->addAttribute($k, $v);
         }
     }
 

@@ -56,3 +56,22 @@ function get_cookie($name) {
 function get_from_array($array, $name, $default = null) {
     return isset($array[$name]) ? $array[$name] : $default;
 }
+
+/**
+ * include file if exists, do nothing otherwise
+ * @param $file
+ */
+function try_include($file) {
+    if(is_file($file)) include $file;
+}
+
+/**
+ * parse ini file if exists, do nothing otherwise
+ * @param $file
+ * @return array|bool
+ */
+function try_parse_ini($file) {
+    if(is_file($file)) return parse_ini_file($file, true);
+    return false;
+
+}
