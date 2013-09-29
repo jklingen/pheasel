@@ -285,7 +285,7 @@ class RequestHandler extends AbstractLoggingClass {
         $parsed = try_parse_ini($file);
 
         if($parsed && count($parsed) > 0) {
-            if(isset($parsed['messages']) && count($parsed['messages']) > 0) $this->messages = array_merge($this->messages, $parsed);
+            if(isset($parsed['messages']) && count($parsed['messages']) > 0) $this->messages = array_merge($this->messages, $parsed['messages']);
         }
     }
 
