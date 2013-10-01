@@ -29,7 +29,7 @@ define('PHEASEL_PAGES_DIR', realpath(PHEASEL_ROOT . "/../site").DIRECTORY_SEPARA
 define('PHEASEL_FILES_CACHE', PHEASEL_ROOT . '/cache/files.xml');
 
 // pheasel export directory for page-wise HTML/PHP export
-define('PHEASEL_EXPORT_DIR', realpath(PHEASEL_ROOT . "/../site-export")); // force trailing slash, which makes things easier for us later
+define('PHEASEL_EXPORT_DIR', realpath(PHEASEL_ROOT . "/../site-export"));
 
 if(strpos(PHEASEL_PAGES_DIR, realpath(PHEASEL_ROOT."/../")) === false) {
     throw new Exception("Directory structure does not seem to be valid - is the 'site' subdirectory missing?");

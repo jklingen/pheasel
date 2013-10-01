@@ -21,11 +21,13 @@
 
 // pheasel working directory
 define('PHEASEL_ROOT', realpath(getcwd() . "/../pheasel"));
-//set_include_path(PHEASEL_ROOT);
+
 // user's content space
-define('PHEASEL_PAGES_DIR', realpath(PHEASEL_ROOT . "/../pheasel_test/test-site")."/"); // force trailing slash, which makes things easier for us later
-//pheasel's internal files cache
+define('PHEASEL_PAGES_DIR', realpath(PHEASEL_ROOT . "/../pheasel_test/test-site").DIRECTORY_SEPARATOR); // force trailing slash, which makes things easier for us later
+
+// pheasel's internal files cache
 define('PHEASEL_FILES_CACHE', realpath(PHEASEL_ROOT . '/../pheasel_test/cache/files.xml'));
+
 // pheasel export directory for page-wise HTML/PHP export
 define('PHEASEL_EXPORT_DIR', realpath(PHEASEL_ROOT . "/../site-export"));
 
