@@ -32,14 +32,26 @@ class Placeholder {
     const SECTION_MODE_IGNORE = 0;
     const SECTION_MODE_PROCESS = 1;
 
+    /**
+     * @var string name of the Placeholder, e.g. snippet
+     */
     public $name;
+    /**
+     * @var array array of the placeholder's attributes
+     */
     public $attributes;
+
+    /**
+     * @var string the original string that has been parsed to populate this object
+     */
+    public $placeholder_string;
 
     /**
      * @param $placeholder_string string placeholder string with or without prefix/suffix, e.g. <code>${asdf qwer=bla}$</code>
      * @param int $section_mode either Placeholder::SECTION_MODE_PROCESS or Placeholder::SECTION_MODE_IGNORE
      */
     function __construct($placeholder_string, $section_mode = Placeholder::SECTION_MODE_IGNORE) {
+        $this->placeholder_string = $placeholder_string;
         $placeholder_string = trim($placeholder_string);
         // get rid of ${ and }$
         $placeholder_string = str_replace(PHEASEL_PLACEHOLDER_PREFIX, "", $placeholder_string);

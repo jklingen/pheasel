@@ -124,13 +124,13 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     public function include_snippet($id) {
-        $this->debug("Including snippet $id");
+        if($this->debugEnabled()) $this->debug("Including snippet $id");
         $this->read_markup_file(PHEASEL_PAGES_DIR.SiteConfig::get_instance()->get_snippet_info($id)->file);
     }
 
   public function read_markup_file($file) {
       $this->hierarchy_include($file);
-      // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is neccessary, though
+      // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is necessary, though
       $markup = file_get_contents($file);
       $parts = explode('<head>',$markup); // (.*)<head>(.*)
       if(count($parts)>1) {
@@ -152,7 +152,7 @@ class RequestHandler extends AbstractLoggingClass {
                   $this->append_body(str_replace("<body>","", $parts[0]));
               }
           }
-      }else {
+      } else {
           $this->append_body(str_replace("<body>","", $parts[0]));
       }
       // TODO exception handling
@@ -178,7 +178,9 @@ class RequestHandler extends AbstractLoggingClass {
         $this->append($append_target, $parts[0]);
         for($i=1; $i<count($parts); $i++) {
             $subparts = explode(PHEASEL_PLACEHOLDER_SUFFIX, $parts[$i]);  // (.*)}$(.*)
-            $this->append($append_target, $this->process_placeholder_string($subparts[0]));
+            $ph = $this->parse_placeholder_string($subparts[0]);
+            // TODO iterator implementation goes here
+            $this->append($append_target, $this->process_placeholder($ph));
             if(count($subparts )>1) {
                 $this->append($append_target, $this->unescape_escaped_placeholders($subparts[1]));
             }
@@ -196,11 +198,13 @@ class RequestHandler extends AbstractLoggingClass {
         }
     }
 
-    private function process_placeholder_string($placeholder) {
-        $ph = new Placeholder($placeholder);
-        $ret = $this->process_placeholder($ph);
-        if($ret === NULL) $ret = PHEASEL_PLACEHOLDER_PREFIX .$placeholder. PHEASEL_PLACEHOLDER_SUFFIX; // if we cannot handle it, restore original placeholder - maybe someone else will take care
-        return $ret;
+    private function process_placeholder_string($placeholder_string) {
+        $ph = $this->parse_placeholder_string($placeholder_string);
+        return $this->process_placeholder($ph);
+    }
+
+    private function parse_placeholder_string($placeholder_string) {
+        return new Placeholder($placeholder_string);
     }
 
     private function process_placeholder($placeholder) {
@@ -220,10 +224,10 @@ class RequestHandler extends AbstractLoggingClass {
                 } else {
                     return $attrs['id'];
                 }
-            // TODO implement placeholders
-            default: return NULL;
         }
         // TODO extension hook here
+        // placeholder could not be processed, restore original placeholder - maybe someone else will take care
+        return $placeholder->placeholder_string;
     }
 
     private function unescape_escaped_placeholders($markup_with_escaped_placeholders) {
