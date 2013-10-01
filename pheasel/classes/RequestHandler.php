@@ -92,6 +92,7 @@ class RequestHandler extends AbstractLoggingClass {
         }
         $ret .= '</body></html>';
         // if no one demands otherwise, we output pure HTML
+        if($this->traceEnabled()) $this->trace("Rendered HTML is: $ret");
         if(!$this->preserve_php) {
             ob_start();
             eval(' ?>'.$ret.'<?php ');
@@ -237,10 +238,11 @@ class RequestHandler extends AbstractLoggingClass {
      * <filename> is the name of the markup file.
      * @param $file
      */
-    private function hierarchy_include($file) {
-        $path_info = pathinfo($file);
-
+    private function hierarchy_include($file, $current_dir=PHEASEL_PAGES_DIR) {
         if(!$this->rendering) {
+            if($this->debugEnabled()) $this->debug("Looking for files to include in $current_dir");
+            $path_info = pathinfo($file);
+
             // TODO consider iterating from PHEASEL_PAGES_DIR down instead from markup file up
             if($path_info['dirname'] . DIRECTORY_SEPARATOR != PHEASEL_PAGES_DIR) {
                 $this->hierarchy_include($path_info['dirname']);

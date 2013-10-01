@@ -33,23 +33,43 @@ abstract class AbstractLoggingClass {
     }
 
     protected function trace($message) {
-        if($this->logger->isTraceEnabled())  $this->logger->trace($message);
+        if($this->traceEnabled())  $this->logger->trace($message);
     }
 
     protected function debug($message) {
-        if($this->logger->isDebugEnabled())  $this->logger->debug($message);
+        if($this->debugEnabled())  $this->logger->debug($message);
     }
 
     protected function info($message) {
-        if($this->logger->isInfoEnabled()) $this->logger->info($message);
+        if($this->infoEnabled()) $this->logger->info($message);
     }
 
     protected function warn($message) {
-        if($this->logger->isWarnEnabled()) $this->logger->warn($message);
+        if($this->warnEnabled()) $this->logger->warn($message);
     }
 
     protected function error($message) {
-        if($this->logger->isErrorEnabled()) $this->logger->error($message);
+        if($this->errorEnabled()) $this->logger->error($message);
+    }
+
+    protected function traceEnabled() {
+        return $this->logger->isTraceEnabled();
+    }
+
+    protected function debugEnabled() {
+        return $this->logger->isDebugEnabled();
+    }
+
+    protected function infoEnabled() {
+        return $this->logger->isInfoEnabled();
+    }
+
+    protected function warnEnabled() {
+        return $this->logger->isWarnEnabled();
+    }
+
+    protected function errorEnabled() {
+        return $this->logger->isErrorEnabled();
     }
 
 

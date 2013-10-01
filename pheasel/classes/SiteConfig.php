@@ -65,8 +65,8 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
      */
     public function get_page_info_by_url($url) {
-        $foundNodes = $this->xmlRoot->xpath("pages/item[@url='$url']");
         $this->debug("Retrieving page info for URL $url");
+        $foundNodes = $this->xmlRoot->xpath("pages/item[@url='$url']");
         switch(count($foundNodes)) {
             case 0: return null;
             case 1: return $this->get_page_info_from_node($foundNodes[0]);
@@ -81,6 +81,7 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
      */
     public function get_page_info($page_id, $lang = null) {
+        if($this->debugEnabled()) $this->debug("Retrieving page info for id $page_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and @lang='$lang']");
         if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and not(@lang)]");
@@ -98,6 +99,7 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching snippet has been found for the provided ID
      */
     public function get_snippet_info($snippet_id, $lang = null) {
+        if($this->debugEnabled()) $this->debug("Retrieving snippet info for id $snippet_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and @lang='$lang']");
         if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and not(@lang)]");
@@ -116,6 +118,7 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching template has been found for the provided ID
      */
     public function get_template_info($tmpl_id, $lang = null) {
+        if($this->debugEnabled()) $this->debug("Retrieving template info for id $tmpl_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
         $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and @lang='$lang']");
         if(count($foundNodes)==0) {
