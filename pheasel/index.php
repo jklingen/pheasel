@@ -19,6 +19,7 @@
  * limitations under the License.
  */
 
+require_once("includes/util.php");
 require_once("../pheasel_config.php");
 require_once("globals.php");
 require_once("classes/RequestHandler.php");

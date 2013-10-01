@@ -6,8 +6,11 @@ const PHEASEL_ENVIRONMENT_DEV = 'dev';
  * Whether the current instance of PHeasel is running in a development or production environment. In PROD mode,
  * the PHeasel developer bar is not displayed and markup file cache auto update is deactivated (regardless of
  * PHEASEL_AUTO_UPDATE_FILES_CACHE setting.
+ * Please note: instead of changing the constant below, you can set an environment variable <code>PHEASELENV</code> to
+ * <code>prod</code> or <code>dev</code>.
  */
-const PHEASEL_ENVIRONMENT = PHEASEL_ENVIRONMENT_DEV;
+$env = getenv('PHEASELENV');
+define('PHEASEL_ENVIRONMENT', $env ? $env : PHEASEL_ENVIRONMENT_DEV);
 
 
 
