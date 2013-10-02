@@ -95,7 +95,9 @@ class RequestHandler extends AbstractLoggingClass {
         if($this->traceEnabled()) $this->trace("Rendered HTML is: $ret");
         if(!$this->preserve_php) {
             ob_start();
-            eval(' ?>'.$ret.'<?php ');
+            if(!eval(' ?>'.$ret.'<?php ')) {
+                if($this->errorEnabled()) $this->error("eval of page markup has failed\n---------- non-eval'able code below ----------\n " . $ret . "\n---------- non-eval'able code above ----------");
+            }
             $ret = ob_get_clean();
         }
         return $ret;
