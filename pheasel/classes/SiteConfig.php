@@ -59,6 +59,15 @@ class SiteConfig extends AbstractLoggingClass {
         return $ret;
     }
 
+    public function get_all_page_infos() {
+        $foundNodes = $this->xmlRoot->xpath("pages/item");
+        $ret = array();
+        foreach($foundNodes as $foundNode) {
+            array_push($ret, $this->get_page_info_from_node($foundNode));
+        }
+        return $ret;
+    }
+
     /**
      * @param $url string request url
      * @return PageInfo containing info about directory and language of the requested page
@@ -67,6 +76,21 @@ class SiteConfig extends AbstractLoggingClass {
     public function get_page_info_by_url($url) {
         $this->debug("Retrieving page info for URL $url");
         $foundNodes = $this->xmlRoot->xpath("pages/item[@url='$url']");
+        switch(count($foundNodes)) {
+            case 0: return null;
+            case 1: return $this->get_page_info_from_node($foundNodes[0]);
+            default: throw new AmbiguousConfigException(count($foundNodes)." page markup files have been found for URL $url");
+        }
+    }
+
+    /**
+     * @param $url string request url
+     * @return PageInfo containing info about directory and language of the requested file
+     * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
+     */
+    public function get_file_info_by_url($url) {
+        $this->debug("Retrieving file info for URL $url");
+        $foundNodes = $this->xmlRoot->xpath("files/item[@url='$url']");
         switch(count($foundNodes)) {
             case 0: return null;
             case 1: return $this->get_page_info_from_node($foundNodes[0]);
