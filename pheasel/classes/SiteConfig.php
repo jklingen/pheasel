@@ -59,6 +59,15 @@ class SiteConfig extends AbstractLoggingClass {
         return $ret;
     }
 
+    public function get_all_file_urls() {
+        $foundNodes = $this->xmlRoot->xpath("files/item/@url");
+        $ret = array();
+        foreach($foundNodes as $foundNode) {
+            array_push($ret, (string)$foundNode);
+        }
+        return $ret;
+    }
+
     public function get_all_page_infos() {
         $foundNodes = $this->xmlRoot->xpath("pages/item");
         $ret = array();
