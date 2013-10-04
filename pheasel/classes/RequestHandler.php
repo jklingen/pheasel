@@ -67,7 +67,13 @@ class RequestHandler extends AbstractLoggingClass {
             $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
         }
         $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
-        // no page found? extra service: maybe just a trailing slash missing? let's try that:
+        // no page found? maybe it is not a page, but a file?
+        $is_page = true;
+        if($pageInfo == null) {
+            $pageInfo = SiteConfig::get_instance()->get_file_info_by_url($relative_url);
+            if($pageInfo) $is_page = false;
+        }
+        // still nothing? extra service: maybe just a trailing slash missing? let's try that:
         if($pageInfo == null && substr($relative_url,-1) != '/') {
             $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url.'/');
             if($pageInfo != null) {
@@ -80,27 +86,42 @@ class RequestHandler extends AbstractLoggingClass {
 			throw new PageNotFoundException("No page could be found for $relative_url");
 		}
 
-
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
 
-        $ret  = $this->head_markup;
-        $ret .= '</head>';
-        $ret .= $this->body_markup;
-        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
-            $ret .= $this->render_developer_bar(strlen($ret) + 14); // +14 for closing HTML
-        }
-        $ret .= '</body></html>';
-        // if no one demands otherwise, we output pure HTML
-        if($this->traceEnabled()) $this->trace("Rendered HTML is: $ret");
-        if(!$this->preserve_php) {
-            ob_start();
-            if(!eval(' ?>'.$ret.'<?php ')) {
-                if($this->errorEnabled()) $this->error("eval of page markup has failed\n---------- non-eval'able code below ----------\n " . $ret . "\n---------- non-eval'able code above ----------");
+        if($is_page) {
+            // for HTML documents: aggregate page markup with head and body + render developer bar
+            $ret  = $this->head_markup;
+            $ret .= '</head>';
+            $ret .= $this->body_markup;
+            if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
+                $ret .= $this->render_developer_bar(strlen($ret) + 14); // +14 for closing HTML
             }
-            $ret = ob_get_clean();
+            $ret .= '</body></html>';
+            if($this->traceEnabled()) $this->trace("Rendered HTML is: $ret");
+            // if no one demands otherwise, we output pure HTML
+            if(!$this->preserve_php) {
+                $ret = $this->eval_markup($ret);
+            }
+        } else {
+            // for other types, just output the markup (or whatever the content is)
+            $ret = $this->body_markup;
+            $ret = $this->eval_markup($ret);
         }
         return $ret;
+    }
+
+    /**
+     * @param $markup string markup that might contain PHP code snippets
+     * @return string markup with all PHP code eval'd
+     */
+    public function eval_markup($markup) {
+        ob_start();
+        if (!eval(' ?>' . $markup . '<?php ')) {
+            if ($this->errorEnabled()) $this->error("eval of page markup has failed\n---------- non-eval'able code below ----------\n " . $markup . "\n---------- non-eval'able code above ----------");
+        }
+        $markup = ob_get_clean();
+        return $markup;
     }
 
     private function collate_markup_for_page($page_info) {
@@ -153,6 +174,8 @@ class RequestHandler extends AbstractLoggingClass {
                   // append to body section (removing starting <body> tag before)
                   $this->append_body(str_replace("<body>","", $parts[0]));
               }
+          } else {
+              // TODO what?
           }
       } else {
           $this->append_body(str_replace("<body>","", $parts[0]));
@@ -226,6 +249,9 @@ class RequestHandler extends AbstractLoggingClass {
                 } else {
                     return $attrs['id'];
                 }
+            case 'each':
+                if(isset($attrs['var'])) return '<?php foreach('.$attrs['var'].' as $it) { ?>';
+                else return '<?php } ?>';
         }
         // TODO extension hook here
         // placeholder could not be processed, restore original placeholder - maybe someone else will take care

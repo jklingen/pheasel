@@ -39,9 +39,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
     private $pages_node;
     private $templates_node;
     private $snippets_node;
-    private $page_xmls;
-    private $template_xmls;
-    private $snippet_xmls;
+    private $files_node;
 
 
 
@@ -54,10 +52,8 @@ class SiteConfigWriter extends AbstractLoggingClass {
         $this->pages_node = $this->root_node->addChild("pages");
         $this->snippets_node = $this->root_node->addChild("snippets");
         $this->templates_node = $this->root_node->addChild("templates");
+        $this->files_node = $this->root_node->addChild("files");
 
-        $this->page_xmls = array();
-        $this->template_xmls = array();
-        $this->snippet_xmls = array();
         $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(PHEASEL_PAGES_DIR, FilesystemIterator::SKIP_DOTS));
         $it->next();
         while($it->valid()) {
@@ -116,7 +112,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
                     foreach($filenameparts as $i=>$filenamepart) {
                         if(empty($attrs["lang"]) && strlen($filenamepart) == 2) { // 2 chars is assumed to be language (if not already set)
                             $attrs["lang"] = $filenamepart;
-                        } else if(strlen($filenamepart) == 4 && ($filenamepart == 'tmpl' || $filenamepart == 'snip' || $filenamepart == 'page')) {
+                        } else if(strlen($filenamepart) == 4 && ($filenamepart == 'tmpl' || $filenamepart == 'snip' || $filenamepart == 'page' || $filenamepart == 'file')) {
                             $type = $filenamepart;
                         } else {
                             array_push($filenameparts_for_id, $filenamepart);
@@ -180,7 +176,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
 
     /**
      * Creates a child node depending on type and adds attributes to it.
-     * @param $type string page|snip|tmpl
+     * @param $type string page|snip|tmpl|file
      * @param $attrs array of attributes for the markup file
      * @throws Exception if type cannot be processed
      */
@@ -188,7 +184,8 @@ class SiteConfigWriter extends AbstractLoggingClass {
         if ($type == "page") $my_node = $this->pages_node->addChild("item");
         else if ($type == "snip") $my_node = $this->snippets_node->addChild("item");
         else if ($type == "tmpl") $my_node = $this->templates_node->addChild("item");
-        else throw new Exception("Markup type $type could not be processed. The file name should contain either page, tmpl or snip.");
+        else if ($type == 'file') $my_node = $this->files_node->addChild("item");
+        else throw new Exception("Markup type $type could not be processed. The file name should contain either page, tmpl, snip or file.");
 
         foreach ($attrs as $k => $v) {
             $my_node->addAttribute($k, $v);

@@ -48,6 +48,8 @@ if($export_single) {
     $urls = array($export_single);
 } else {
     $urls = SiteConfig::get_instance()->get_all_page_urls();
+    // export other dynamic files, too
+    array_splice($urls, 0,0,SiteConfig::get_instance()->get_all_file_urls());
     clear_export_dir();
 }
 
@@ -60,8 +62,15 @@ foreach($urls as $url) {
     $rh->preserve_php = $preserve_php;
     $rh->batch_mode = true;
     $markup = $rh->render_page($url);
-    if(!file_exists(PHEASEL_EXPORT_DIR.$url)) mkdir(PHEASEL_EXPORT_DIR.$url);
-    file_put_contents(PHEASEL_EXPORT_DIR.$url."index.$ext", $markup);
+    $pi = pathinfo($url);
+    if(isset($pi['extension'])) {
+        file_put_contents(PHEASEL_EXPORT_DIR.$url, $markup);
+    } else {
+        if(!str_ends_with($url,'/')) $url .= '/';
+        if(!file_exists(PHEASEL_EXPORT_DIR.$url)) mkdir(PHEASEL_EXPORT_DIR.$url);
+        file_put_contents(PHEASEL_EXPORT_DIR.$url."index.$ext", $markup);
+    }
+
 }
 
 copy_static_dir();
