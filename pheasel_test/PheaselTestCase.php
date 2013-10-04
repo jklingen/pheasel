@@ -24,6 +24,15 @@ require_once '../pheasel_config.php';
 require_once 'globals.php';
 
 class PheaselTestCase extends PHPUnit_Framework_TestCase {
+
+    protected $logger;
+
+    function __construct()
+    {
+
+        Logger::configure(PHEASEL_ROOT.'/log4php.php');
+        $this->logger = Logger::getLogger(get_class($this));
+    }
 }
 
 ?>
