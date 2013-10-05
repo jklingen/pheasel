@@ -1,16 +1,15 @@
 <?php
+/**
+ * Custom 404 page, feel free to change it to fit your needs.
+ * Note: won't be displayed when PHeasel is running in development environment, because the error page
+ * contains more background information.
+ */
 
 /*
 ${config
     id=   404
     name= Page not found
 }$
- */
-
-/**
- * Custom 404 page, feel free to change it to fit your needs.
- * Note: won't be displayed when PHeasel is running in development environment, because the error page
- * contains more background information.
  */
 ?>
 <html>

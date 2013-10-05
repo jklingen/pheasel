@@ -58,31 +58,39 @@ class RequestHandler extends AbstractLoggingClass {
      * @throws PageNotFoundException if no page could be found for this request
      */
     public function render_page($relative_url = NULL) {
-        if((PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) && PHEASEL_AUTO_UPDATE_FILES_CACHE) {
-            SiteConfigWriter::get_instance()->update_cache();
-        }
-        if(!isset($relative_url)) {
-            // pheasel might not be in docroot, discard anything which is above in hierarchy
-            $strpos_pheasel = strpos($_SERVER['PHP_SELF'], '/pheasel/');
-            $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
-        }
-        $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
-        // no page found? maybe it is not a page, but a file?
         $is_page = true;
-        if($pageInfo == null) {
-            $pageInfo = SiteConfig::get_instance()->get_file_info_by_url($relative_url);
-            if($pageInfo) $is_page = false;
-        }
-        // still nothing? extra service: maybe just a trailing slash missing? let's try that:
-        if($pageInfo == null && substr($relative_url,-1) != '/') {
-            $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url.'/');
-            if($pageInfo != null) {
-                $this->redirect($_SERVER["REQUEST_URI"].'/');
+        try {
+            if((PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) && PHEASEL_AUTO_UPDATE_FILES_CACHE) {
+                SiteConfigWriter::get_instance()->update_cache();
             }
+            if(!isset($relative_url)) {
+                // pheasel might not be in docroot, discard anything which is above in hierarchy
+                $strpos_pheasel = strpos($_SERVER['PHP_SELF'], '/pheasel/');
+                $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
+            }
+            $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
+
+            // no page found? maybe it is not a page, but a file?
+            if($pageInfo == null) {
+                $pageInfo = SiteConfig::get_instance()->get_file_info_by_url($relative_url);
+                if($pageInfo) $is_page = false;
+            }
+            // still nothing? extra service: maybe just a trailing slash missing? let's try that:
+            if($pageInfo == null && substr($relative_url,-1) != '/') {
+                $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url.'/');
+                if($pageInfo != null) {
+                    $this->redirect($_SERVER["REQUEST_URI"].'/');
+                }
+            }
+            if($pageInfo == null) {
+                $pageInfo = $this->handle_page_not_found($relative_url);
+            }
+        } catch(Exception $ex) {
+            $pageInfo = $this->handle_internal_server_error($ex, $relative_url);
         }
-		if($pageInfo == null) {
-            $pageInfo = $this->handle_page_not_found($relative_url);
-		}
+
+        // page not found should have been handled above. if not, there's something wrong (maybe 404 page was removed)
+        if(!isset($pageInfo)) throw new PageNotFoundException("Could not find page for $relative_url");
 
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
@@ -120,10 +128,21 @@ class RequestHandler extends AbstractLoggingClass {
         if(PHEASEL_ENVIRONMENT == PHEASEL_ENVIRONMENT_PROD) {
             header("HTTP/1.1 404 Not Found");
             $pageInfo = SiteConfig::get_instance()->get_page_info('404', PHEASEL_FALLBACK_LANGUAGE);
-            $pageInfo->url = $relative_url;
+            if($pageInfo) $pageInfo->url = $relative_url;
             return $pageInfo;
         } else {
             throw new PageNotFoundException("No page could be found for $relative_url");
+        }
+    }
+
+    private function handle_internal_server_error($exception, $relative_url) {
+        if(PHEASEL_ENVIRONMENT == PHEASEL_ENVIRONMENT_PROD) {
+            header("HTTP/1.1 500 Internal Server Error");
+            $pageInfo = SiteConfig::get_instance()->get_page_info('500', PHEASEL_FALLBACK_LANGUAGE);
+            if($pageInfo) $pageInfo->url = $relative_url;
+            return $pageInfo;
+        } else {
+            throw $exception;
         }
     }
 
