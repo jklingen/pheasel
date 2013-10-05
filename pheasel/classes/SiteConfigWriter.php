@@ -154,8 +154,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
      * @param $inifile string the ini file to extend from
      * @return array extended attributes
      */
-    private function extend_attrs_from_ini($attrs, $inifile)
-    {
+    private function extend_attrs_from_ini($attrs, $inifile) {
         $ini_attrs = $attrs;
         $parsed_ini = try_parse_ini($inifile);
         $ini_config = get_from_array($parsed_ini, 'config');
