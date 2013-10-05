@@ -25,6 +25,12 @@ define('PHEASEL_ENVIRONMENT', $env ? $env : PHEASEL_ENVIRONMENT_DEV);
 const PHEASEL_AUTO_UPDATE_FILES_CACHE = true;
 
 /**
+ * If PHeasel cannot determine the target language, e.g. in case of an error, this is the language for
+ * the resulting page.
+ */
+const PHEASEL_FALLBACK_LANGUAGE = 'en';
+
+/**
  * Patterns for PHeasel placeholders, may be changed to avoid eventual conflicts with other tools processing your markup.
  * When changing these values, be aware that any of the prefixes and suffixes must be unambiguous, e.g. %whatever%
  * won't work, same goes for $%whatever% (in both cases, searching for % would match suffix *and* prefix.

@@ -77,28 +77,18 @@ class RequestHandler extends AbstractLoggingClass {
         if($pageInfo == null && substr($relative_url,-1) != '/') {
             $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url.'/');
             if($pageInfo != null) {
-                header("HTTP/1.1 301 Moved Permanently");
-                header("Location: ".$_SERVER["REQUEST_URI"].'/');
-                exit;
+                $this->redirect($_SERVER["REQUEST_URI"].'/');
             }
         }
 		if($pageInfo == null) {
-			throw new PageNotFoundException("No page could be found for $relative_url");
+            $pageInfo = $this->handle_page_not_found($relative_url);
 		}
 
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
 
         if($is_page) {
-            // for HTML documents: aggregate page markup with head and body + render developer bar
-            $ret  = $this->head_markup;
-            $ret .= '</head>';
-            $ret .= $this->body_markup;
-            if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
-                $ret .= $this->render_developer_bar(strlen($ret) + 14); // +14 for closing HTML
-            }
-            $ret .= '</body></html>';
-            if($this->traceEnabled()) $this->trace("Rendered HTML is: $ret");
+            $ret = $this->assemble_page_markup();
             // if no one demands otherwise, we output pure HTML
             if(!$this->preserve_php) {
                 $ret = $this->eval_markup($ret);
@@ -112,10 +102,51 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     /**
+     * Redirect permanently to another URL (HTTP status 301)
+     * @param $absolute_url string absolute URL to redirect to (including protocol and domain)
+     */
+    private function redirect($absolute_url) {
+        header("HTTP/1.1 301 Moved Permanently");
+        header("Location: $absolute_url");
+        exit;
+    }
+
+    /**
+     * @param $relative_url string URL that could not be found
+     * @return PageInfo 404 page that will be displayed
+     * @throws PageNotFoundException if not in PROD mode, to give some background info for request
+     */
+    private function handle_page_not_found($relative_url) {
+        if(PHEASEL_ENVIRONMENT == PHEASEL_ENVIRONMENT_PROD) {
+            header("HTTP/1.1 404 Not Found");
+            $pageInfo = SiteConfig::get_instance()->get_page_info('404', PHEASEL_FALLBACK_LANGUAGE);
+            $pageInfo->url = $relative_url;
+            return $pageInfo;
+        } else {
+            throw new PageNotFoundException("No page could be found for $relative_url");
+        }
+    }
+
+    /**
+     * @return string complete HTML document structure assembled from markup files
+     */
+    private function assemble_page_markup() {
+        // for HTML documents: aggregate page markup with head and body + render developer bar
+        $ret  = $this->head_markup;
+        $ret .= '</head>';
+        $ret .= $this->body_markup;
+        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
+            $ret .= $this->render_developer_bar(strlen($ret) + 14); // +14 for closing HTML
+        }
+        $ret .= '</body></html>';
+        return $ret;
+    }
+
+    /**
      * @param $markup string markup that might contain PHP code snippets
      * @return string markup with all PHP code eval'd
      */
-    public function eval_markup($markup) {
+    private function eval_markup($markup) {
         ob_start();
         if (!eval(' ?>' . $markup . '<?php ')) {
             if ($this->errorEnabled()) $this->error("eval of page markup has failed\n---------- non-eval'able code below ----------\n " . $markup . "\n---------- non-eval'able code above ----------");
@@ -137,7 +168,7 @@ class RequestHandler extends AbstractLoggingClass {
         }
     }
 
-    public function include_current_page() {
+    private function include_current_page() {
         if($this->current_page_included && !$this->batch_mode) {
             throw new Exception("Tried to include the current page more than once.");
         }
@@ -146,41 +177,41 @@ class RequestHandler extends AbstractLoggingClass {
 
     }
 
-    public function include_snippet($id) {
+    private function include_snippet($id) {
         if($this->debugEnabled()) $this->debug("Including snippet $id");
         $this->read_markup_file(PHEASEL_PAGES_DIR.SiteConfig::get_instance()->get_snippet_info($id)->file);
     }
 
-  public function read_markup_file($file) {
-      $this->hierarchy_include($file);
-      // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is necessary, though
-      $markup = file_get_contents($file);
-      $parts = explode('<head>',$markup); // (.*)<head>(.*)
-      if(count($parts)>1) {
-          if(!isset( $this->head_markup)) {
-              // init header section
-              $this->append_head($parts[0] . '<head>');
-          }
-          $parts = explode('</head>', $parts[1]); // <head>(.*)</head>(.*)
-          // append to existing header section
-          $this->append_head($parts[0]);
-
-          $parts = explode('</body>', $parts[1]); // </head>(.*)</body>(.*)
-          if(count($parts)>1) {
-              if(!isset($this->body_markup)) {
-                  // init body section
-                  $this->append_body($parts[0]);
-              } else {
-                  // append to body section (removing starting <body> tag before)
-                  $this->append_body(str_replace("<body>","", $parts[0]));
+    private function read_markup_file($file) {
+        $this->hierarchy_include($file);
+        // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is necessary, though
+        $markup = file_get_contents($file);
+        $parts = explode('<head>',$markup); // (.*)<head>(.*)
+        if(count($parts)>1) {
+              if(!isset( $this->head_markup)) {
+                  // init header section
+                  $this->append_head($parts[0] . '<head>');
               }
-          } else {
-              // TODO what?
-          }
-      } else {
+              $parts = explode('</head>', $parts[1]); // <head>(.*)</head>(.*)
+              // append to existing header section
+              $this->append_head($parts[0]);
+
+              $parts = explode('</body>', $parts[1]); // </head>(.*)</body>(.*)
+              if(count($parts)>1) {
+                  if(!isset($this->body_markup)) {
+                      // init body section
+                      $this->append_body($parts[0]);
+                  } else {
+                      // append to body section (removing starting <body> tag before)
+                      $this->append_body(str_replace("<body>","", $parts[0]));
+                  }
+              } else {
+                  // TODO what?
+              }
+        } else {
           $this->append_body(str_replace("<body>","", $parts[0]));
-      }
-      // TODO exception handling
+        }
+        // TODO exception handling
     }
 
     private function append_head($markup) {
@@ -315,7 +346,7 @@ class RequestHandler extends AbstractLoggingClass {
      * parse ini file if exists, do nothing otherwise
      * @param $file
      */
-    public function find_ini_messages($file) {
+    private function find_ini_messages($file) {
         $parsed = try_parse_ini($file);
 
         if($parsed && count($parsed) > 0) {
