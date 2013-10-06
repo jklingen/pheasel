@@ -21,9 +21,9 @@ function devbarExpandCollapse() {
     var c = document.getElementById('pheasel-devbar-control');
     if(c.style.display != 'none') {
         c.style.display = 'none';
-        document.cookie = 'pheasel_devbar_collapsed=true';
+        document.cookie = 'pheasel_devbar_collapsed=true; path=/';
     } else {
         c.style.display = 'inline';
-        document.cookie = 'pheasel_devbar_collapsed=';
+        document.cookie = 'pheasel_devbar_collapsed=; path=/';
     }
 }
