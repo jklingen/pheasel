@@ -20,7 +20,7 @@
  */
 
 require_once "PheaselTestCase.php";
-require_once "../pheasel/classes/domain/Placeholder.php";
+require_once "../core/classes/domain/Placeholder.php";
 
 class PlaceholderTest extends PheaselTestCase {
 

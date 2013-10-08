@@ -20,8 +20,9 @@
  */
 
 require_once "PheaselTestCase.php";
-require_once "../pheasel/classes/SiteConfigWriter.php";
-require_once "../pheasel/classes/error/MarkupNotFoundException.php";
+require_once "../core/classes/SiteConfigWriter.php";
+require_once "../core/classes/RequestHandler.php";
+require_once "../core/classes/error/MarkupNotFoundException.php";
 
 class SiteConfigTest extends PheaselTestCase {
 

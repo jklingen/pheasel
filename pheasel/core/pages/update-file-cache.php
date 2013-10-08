@@ -19,9 +19,9 @@
  * limitations under the License.
  */
 
-require_once("../pheasel_config.php");
-require_once("globals.php");
-require_once('classes/SiteConfigWriter.php');
+require_once("../../../pheasel-config.php");
+require_once("../../globals.php");
+require_once('../classes/SiteConfigWriter.php');
 
 SiteConfigWriter::get_instance()->update_cache();
 ?>

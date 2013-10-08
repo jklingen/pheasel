@@ -20,18 +20,19 @@
 Options -Indexes -MultiViews
 
 RewriteEngine On
-#RewriteRule pheasel/index\.php - [L]
 
 # static resources
-RewriteCond %{ENV:REDIRECT_STATUS} ^$
-RewriteRule ^(.+/)?static/(.*) site/$1static/$2 [L]
+#RewriteCond %{ENV:REDIRECT_STATUS} ^$
+#RewriteCond %{QUERY_STRING} !^site/
+#RewriteRule ^(.+/)?static/(.*) site/$1static/$2 [L]
+RewriteRule ^static/(.*) site/static/$1 [L]
 
 # root directory
-RewriteRule ^$ pheasel/index.php [L]
+RewriteRule ^$ pheasel/core/pages/marshaler.php [L]
 
 #anything else, allowing folders and files to bypass
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule .? pheasel/index.php [L]
+RewriteRule .? pheasel/core/pages/marshaler.php [L]
 
 </IfModule>

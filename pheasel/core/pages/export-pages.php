@@ -26,11 +26,11 @@ limitations under the License.
 </head>
 <body><pre>
 <?php
-require_once("../pheasel_config.php");
-require_once("globals.php");
-require_once("includes/util.php");
-require_once("classes/SiteConfig.php");
-require_once("classes/RequestHandler.php");
+require_once("../../../pheasel-config.php");
+require_once("../../globals.php");
+require_once("../includes/util.php");
+require_once("../classes/SiteConfig.php");
+require_once("../classes/RequestHandler.php");
 
 $mode = get_from_array($_GET, 'mode');
 $export_single = get_from_array($_GET, 'exportsingle');

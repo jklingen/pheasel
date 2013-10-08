@@ -19,13 +19,13 @@
  * limitations under the License.
  */
 
-require_once(PHEASEL_ROOT . "/includes/util.php"); // TODO understand path issue
-require_once(PHEASEL_ROOT . "/classes/AbstractLoggingClass.php");
-require_once(PHEASEL_ROOT . "/classes/domain/PageInfo.php");
-require_once(PHEASEL_ROOT . "/classes/domain/TemplateInfo.php");
-require_once(PHEASEL_ROOT . "/classes/domain/SnippetInfo.php");
-require_once(PHEASEL_ROOT . "/classes/error/MarkupNotFoundException.php");
-require_once(PHEASEL_ROOT . "/classes/error/AmbiguosConfigException.php");
+require_once(PHEASEL_CORE . "/includes/util.php"); // TODO understand path issue
+require_once(PHEASEL_CORE . "/classes/AbstractLoggingClass.php");
+require_once(PHEASEL_CORE . "/classes/domain/PageInfo.php");
+require_once(PHEASEL_CORE . "/classes/domain/TemplateInfo.php");
+require_once(PHEASEL_CORE . "/classes/domain/SnippetInfo.php");
+require_once(PHEASEL_CORE . "/classes/error/MarkupNotFoundException.php");
+require_once(PHEASEL_CORE . "/classes/error/AmbiguosConfigException.php");
 
 
 /**

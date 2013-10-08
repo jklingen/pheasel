@@ -19,10 +19,10 @@ class DeveloperBar {
         $collapse_attr = get_cookie('pheasel_devbar_collapsed')?'style="display:none;"':'';
         $export_mode = get_cookie('pheasel_devbar_export_php')?'PHP':'HTML';
         return  '
-            <link rel="stylesheet" href="'.get_resource_url('/pheasel/resources/pheasel-devbar.css').'"/>
-            <script src="'.get_resource_url('/pheasel/resources/pheasel-devbar.js').'"></script>
+            <link rel="stylesheet" href="'.get_resource_url('/pheasel/core/resources/pheasel-devbar.css').'"/>
+            <script src="'.get_resource_url('/pheasel/core/resources/pheasel-devbar.js').'"></script>
             <div id="pheasel-devbar">
-                <form id="pheasel-devbar-control" '.$collapse_attr.' method="GET" action="'.get_resource_url('/pheasel/export-pages.php').'" target="pheaselexport">
+                <form id="pheasel-devbar-control" '.$collapse_attr.' method="GET" action="'.get_resource_url('/pheasel/core/pages/export-pages.php').'" target="pheaselexport">
                     <strong><span title="Site directory: '.PHEASEL_PAGES_DIR.'" style="color:#fff;">PHeasel</span> developer bar</strong>
                     &nbsp;|&nbsp;
                     Export as <input type="text" name="mode" value="'.$export_mode.'" onclick="this.value=(this.value==\'PHP\')?\'HTML\':\'PHP\';this.blur();" onfocus="this.blur()";/>:
@@ -31,7 +31,7 @@ class DeveloperBar {
                     &nbsp;|&nbsp;
                     Markup size: ~ '.$this->format_bytes($this->estimated_page_Size,1).'B
                 </form>
-                <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/resources/pheasel-logo.png').'"/>
+                <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/core/resources/pheasel-logo.png').'"/>
             </div>';
     }
 

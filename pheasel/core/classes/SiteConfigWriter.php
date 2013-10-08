@@ -19,10 +19,10 @@
  * limitations under the License.
  */
 
-require_once(PHEASEL_ROOT . '/classes/AbstractLoggingClass.php');
-require_once(PHEASEL_ROOT . '/includes/util.php'); // TODO understand path issue
-require_once(PHEASEL_ROOT . '/classes/SiteConfig.php');
-require_once(PHEASEL_ROOT . '/classes/domain/Placeholder.php');
+require_once(PHEASEL_CORE . '/classes/AbstractLoggingClass.php');
+require_once(PHEASEL_CORE . '/includes/util.php'); // TODO understand path issue
+require_once(PHEASEL_CORE . '/classes/SiteConfig.php');
+require_once(PHEASEL_CORE . '/classes/domain/Placeholder.php');
 
 class SiteConfigWriter extends AbstractLoggingClass {
 

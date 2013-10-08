@@ -51,14 +51,6 @@ function get_page_name($page_id = NULL) {
     }
 }
 
-
-
-function resource_url_here($resource_name) {
-    $current_uri = PageInfo::$current->url;
-    //echo $current_uri.'+++'.$resource_name;
-    echo get_relative_uri($current_uri, $resource_name);
-}
-
 function get_resource_url($resource_name) {
     $current_uri = PageInfo::$current->url;
     //echo $current_uri.'+++'.$resource_name;
