@@ -58,8 +58,7 @@ class RequestHandler extends AbstractLoggingClass {
      * @return string HTML or PHP markup of the rendered page; PHP within the markup will be eval'd by default, set $preserve_php to true to avoid that (e.g. to export pages keeping dynamic php functionality)
      * @throws PageNotFoundException if no page could be found for this request
      */
-    public function render_page($relative_url = NULL) {
-        $is_page = true;
+    public function dispatch($relative_url = NULL) {
         try {
             if((PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) && PHEASEL_AUTO_UPDATE_FILES_CACHE) {
                 SiteConfigWriter::get_instance()->update_cache();
@@ -74,7 +73,6 @@ class RequestHandler extends AbstractLoggingClass {
             // no page found? maybe it is not a page, but a file?
             if($pageInfo == null) {
                 $pageInfo = SiteConfig::get_instance()->get_file_info_by_url($relative_url);
-                if($pageInfo) $is_page = false;
             }
             // still nothing? extra service: maybe just a trailing slash missing? let's try that:
             if($pageInfo == null && substr($relative_url,-1) != '/') {
@@ -93,10 +91,14 @@ class RequestHandler extends AbstractLoggingClass {
         // page not found should have been handled above. if not, there's something wrong (maybe 404 page was removed)
         if(!isset($pageInfo)) throw new PageNotFoundException("Could not find page for $relative_url");
 
+        return $this->render_page($pageInfo);
+    }
+
+    public function render_page($pageInfo) {
         PageInfo::$current = $pageInfo;
         $this->collate_markup_for_page($pageInfo);
 
-        if($is_page) {
+        if($pageInfo->is_document) {
             $ret = $this->assemble_page_markup();
             // if no one demands otherwise, we output pure HTML
             if(!$this->preserve_php) {
@@ -167,8 +169,9 @@ class RequestHandler extends AbstractLoggingClass {
      */
     private function eval_markup($markup) {
         ob_start();
-        if (!eval(' ?>' . $markup . '<?php ')) {
+        if (eval(' ?>' . $markup . '<?php ') === false) {
             if ($this->errorEnabled()) $this->error("eval of page markup has failed\n---------- non-eval'able code below ----------\n " . $markup . "\n---------- non-eval'able code above ----------");
+            throw new Exception("eval of page markup has failed, see pheasel.log for details.");
         }
         $markup = ob_get_clean();
         return $markup;

@@ -25,4 +25,4 @@ require_once("../../../pheasel-config.php");
 require_once("../classes/RequestHandler.php");
 require_once("../includes/page-methods.php");
 
-echo RequestHandler::get_instance()->render_page();
+echo RequestHandler::get_instance()->dispatch();

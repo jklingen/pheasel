@@ -34,4 +34,6 @@ class PageInfo {
     public $template;
     public $data = array();
 
+    public $is_document = true;
+
 }

@@ -57,11 +57,11 @@ echo "<strong>Starting export of pages from ".PHEASEL_PAGES_DIR.".</strong>\n";
 echo count($urls)." page(s) will be exported as $mode.\n";
 
 foreach($urls as $url) {
-    echo " * $url";
+    echo " * $url\n";
     $rh = new RequestHandler(); // do not use the singleton, but a fresh RequestHandler for every page
     $rh->preserve_php = $preserve_php;
     $rh->batch_mode = true;
-    $markup = $rh->render_page($url);
+    $markup = $rh->dispatch($url);
     $pi = pathinfo($url);
     if(isset($pi['extension'])) {
         file_put_contents(PHEASEL_EXPORT_DIR.$url, $markup);
@@ -72,6 +72,7 @@ foreach($urls as $url) {
     }
 
 }
+
 
 copy_static_dir();
 echo "<strong>Successfully exported to ".PHEASEL_EXPORT_DIR."</strong>\n";
