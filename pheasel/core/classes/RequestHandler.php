@@ -126,25 +126,23 @@ class RequestHandler extends AbstractLoggingClass {
      * @throws PageNotFoundException if not in PROD mode, to give some background info for request
      */
     private function handle_page_not_found($relative_url) {
-        if(PHEASEL_ENVIRONMENT == PHEASEL_ENVIRONMENT_PROD) {
-            header("HTTP/1.1 404 Not Found");
-            $pageInfo = SiteConfig::get_instance()->get_page_info('404', PHEASEL_FALLBACK_LANGUAGE);
-            if($pageInfo) $pageInfo->url = $relative_url;
-            return $pageInfo;
-        } else {
-            throw new PageNotFoundException("No page could be found for $relative_url");
+        header("HTTP/1.1 404 Not Found");
+        $pageInfo = SiteConfig::get_instance()->get_page_info('404', PHEASEL_FALLBACK_LANGUAGE);
+        if($pageInfo) {
+            $pageInfo->url = $relative_url;
         }
+        return $pageInfo;
     }
 
     private function handle_internal_server_error($exception, $relative_url) {
-        if(PHEASEL_ENVIRONMENT == PHEASEL_ENVIRONMENT_PROD) {
-            header("HTTP/1.1 500 Internal Server Error");
-            $pageInfo = SiteConfig::get_instance()->get_page_info('500', PHEASEL_FALLBACK_LANGUAGE);
-            if($pageInfo) $pageInfo->url = $relative_url;
-            return $pageInfo;
-        } else {
-            throw $exception;
+        header("HTTP/1.1 500 Internal Server Error");
+        $lang = isset(PageInfo::$current) ? PageInfo::$current->lang : PHEASEL_FALLBACK_LANGUAGE;
+        $pageInfo = SiteConfig::get_instance()->get_page_info('500', $lang);
+        if($pageInfo) {
+            $pageInfo->url = $relative_url;
+            $pageInfo->data['exception'] = $exception;
         }
+        return $pageInfo;
     }
 
     /**
