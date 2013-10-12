@@ -6,7 +6,7 @@ name= Intro
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="shortcut icon" href="${resource url=/static/favicon.ico}$"/>
+    <link rel="shortcut icon" href="${resource url=/pheasel/core/resources/favicon.ico}$"/>
     <title>PHeasel is up and running, yeah.</title>
     <style>
         body {
@@ -70,7 +70,7 @@ name= Intro
 <div class="bottom">
     <h1>Yay!</h1>
     <h2>PHeasel is up and running,<br/>ready for you to get started.</h2>
-    <img src="${resource url=/pheasel/resources/pheasel-logo.png}$">
+    <img src="${resource url=/pheasel/core/resources/pheasel-logo.png}$">
     <p>
         You should have a look at our <a href="http://pheasel.org/getting-started/?ref=intro">getting started guide</a> first, if you haven't yet.<br/>
         Consult the <a href="http://pheasel.org/reference/?ref=intro">online reference</a> for more detailed information.
