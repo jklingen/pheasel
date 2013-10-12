@@ -59,7 +59,7 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         {
             var constructor = SyntaxHighlighter.Match,
                 code = match[0],
-                tag = new XRegExp('(&lt;|<)[\\s\\/\\?]*(?<name>[:\\w-\\.]+)', 'xg').exec(code),
+                tag = new XRegExp('(&lt;|<|\\{)[\\s\\/\\?]*(?<name>[:\\w-\\.]+)', 'xg').exec(code),
                 result = []
                 ;
 
@@ -87,20 +87,21 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         }
 
         this.regexList = [
-            { regex: new XRegExp('(\\&lt;|<)\\!\\[[\\w\\s]*?\\[(.|\\s)*?\\]\\](\\&gt;|>)', 'gm'),			css: 'color2' },	// <![ ... [ ... ]]>
+            { regex: new XRegExp('(\\&lt;|<|\\{)\\!\\[[\\w\\s]*?\\[(.|\\s)*?\\]\\](\\&gt;|>|\\})', 'gm'),			css: 'color2' },	// <![ ... [ ... ]]>
             { regex: SyntaxHighlighter.regexLib.xmlComments,												css: 'comments' },	// <!-- ... -->
-            { regex: new XRegExp('(&lt;|<)[\\s\\/\\?]*(\\w+)(?<attributes>.*?)[\\s\\/\\?]*(&gt;|>)', 'sg'), func: process }
+            { regex: new XRegExp('(&lt;|<|\\{)[\\s\\/\\?]*(\\w+)(?<attributes>.*?)[\\s\\/\\?]*(&gt;|>|\\})', 'sg'), func: process }
         ];
     };
 
     Brush.prototype	= new SyntaxHighlighter.Highlighter();
-    Brush.aliases	= ['xml', 'xhtml', 'xslt', 'html'];
+    Brush.aliases	= ['pheasel'];
 
-    SyntaxHighlighter.brushes.Xml = Brush;
+    SyntaxHighlighter.brushes.Pheasel = Brush;
 
     // CommonJS
     typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
 })();
+
 
 
 /**

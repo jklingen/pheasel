@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="../static/pheasel.css"/>
@@ -18,6 +18,7 @@
 <body>
 
 
+
 <nav class="clearfix">
 
 
@@ -33,7 +34,6 @@
     </div>
 </nav>
 <div id="main">
-
 
 
 <h1>Getting Started</h1>
@@ -57,7 +57,7 @@
         To create a page, simply create a new file anywhere within the <code>/site/</code> directory - the filename must
         contain the word <code>page</code>, separated by a dot (<code>.</code>) from the rest, e.g.
         <code>mypagefilename.page.php</code> or <code>page.mypagefilename.php</code>. To make the page accessible through a pretty
-        URL, we need to add a little configuration to the markup, see example on the right.<br/>
+        URL, we need to add a little configuration tag to the markup, see example on the right.<br/>
         Voila &ndash; the page can be accessed by entering e.g. <code>http://localhost/my-page/</code> into the
         browser adress bar. Pretty URL. Pretty easy.<br/>
         For more details, have a look at the <a href="../reference/#page-markup-parameters">page markup reference</a>.
@@ -65,21 +65,16 @@
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example: page markup</span>
-        <pre class="brush: xml; highlight: [5,6,7,8]">
-            &lt;!DOCTYPE HTML&gt;
-            &lt;html&gt;
-            &lt;head&gt;
-                &lt;!--
-                ${config
-                    id   = mypage
-                    url  = /my-page/
-                }$ &nbsp;
-                --&gt;
-            &lt;/head&gt;
-            &lt;body&gt;
-                Page content goes here.
-            &lt;/body&gt;
-            &lt;/html&gt;
+        <pre class="brush: pheasel; highlight: [4]">
+        &lt;!DOCTYPE HTML&gt;
+        &lt;html&gt;
+        &lt;head&gt;
+            &lt;ph:config id="mypage" url="/my-page/"&gt; &nbsp;
+        &lt;/head&gt;
+        &lt;body&gt;
+            Page content goes here.
+        &lt;/body&gt;
+        &lt;/html&gt;
         </pre>
     </div>
 </div>
@@ -89,14 +84,28 @@
     <p class="left-col">
         Have you noticed the (yet) unused <code>id</code> in above example? You won't be surprised to hear that you
         need the ID in order to reference your page.<br/>
-        For more details, have a look at the <a href="../reference/#url-pagename-placeholders">URL placeholder reference</a>.
+        For more details, have a look at the <a href="../reference/url">URL placeholder reference</a>.<br/>
+        Bonus: in case your eyes (or your syntax highlighter, or your validator) freak out at the sight of tags within tags,
+        just have a look at the second link and be happy that <a href="../reference/#pheasel-tags">PHeasel's tags</a>
+        are flexible enough for your to use curly
+        instead of angle brackets and single instead of double quotes.
 
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example: link</span>
-        <pre class="brush: xml; highlight:[2]">
+        <pre class="brush: pheasel; highlight:[2]">
             &nbsp;
-            &lt;a href="${url pageid=mypage}$"&gt;Link to my new page&lt;/a&gt;
+            &lt;a href="&lt;ph:url pageid="mypage"&gt;"&gt;
+                Link to my new page
+            &lt;/a&gt;
+            &nbsp;
+        </pre>
+        <span class="caption">Example: alternative syntax for the same link</span>
+        <pre class="brush: pheasel; highlight:[2]">
+            &nbsp;
+            &lt;a href="&#123;ph:url pageid='mypage'&#125;"&gt;
+                Link to my new page
+            &lt;/a&gt;
             &nbsp;
         </pre>
     </div>
@@ -110,24 +119,20 @@
         file anywhere in the <code>/site/</code> directory. Templates need to have the word <code>tmpl</code> in the
         file name, e.g. <code>tmpl.mytemplatefilename.php</code>.<br/>
         Again, an ID is needed to reference the template. In addition, the template markup must contain a
-        <code>${page}$</code> to indicate where the actual page markup
+        <code>&lt;ph:page&gt;</code> to indicate where the actual page markup
         is to be inserted.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example: template markup</span>
-        <pre class="brush: xml; highlight: [5,6,7,12]">
+        <pre class="brush: pheasel; highlight: [4,8]">
             &lt;!DOCTYPE HTML&gt;
             &lt;html&gt;
             &lt;head&gt;
-                &lt;!--
-                ${config
-                    id   = mytemplate
-                }$ &nbsp;
-                --&gt;
+                &lt;ph:config id= mytemplate&gt; &nbsp;
             &lt;/head&gt;
             &lt;body&gt;
                 Navigation goes here.
-                ${page}$&nbsp;
+                &lt;ph:page&gt;&nbsp;
                 Footer goes here.
             &lt;/body&gt;
             &lt;/html&gt;
@@ -142,14 +147,12 @@
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example: referencing a template from a page</span>
-        <pre class="brush: xml; highlight: [5]">
-            &lt;!--
-            ${config
+        <pre class="brush: pheasel; highlight: [4]">
+            &lt;ph:config
                 id       = mypage
                 url      = /my-page/
                 template = mytemplate
-            }$ &nbsp;
-            --&gt;
+            &gt; &nbsp;
         </pre>
     </div>
 </div>
@@ -164,15 +167,11 @@
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example: snippet markup</span>
-        <pre class="brush: xml; highlight: [5,6,7]">
+        <pre class="brush: pheasel; highlight: [4]">
             &lt;!DOCTYPE HTML&gt;
             &lt;html&gt;
             &lt;head&gt;
-                &lt;!--
-                ${config
-                    id   = mysnippet
-                }$ &nbsp;
-                --&gt;
+                &lt;ph:config id=mysnippet&gt; &nbsp;
             &lt;/head&gt;
             &lt;body&gt;
                 Snippet content goes here.
@@ -184,13 +183,14 @@
 <div class="clearfix">
     <p class="left-col">
         You can reference snippets from pages, templates and even from other snippets.<br/>
-        For more details, have a look at the <a href="../reference/#snippet-markup-parameters">snippet markup reference</a>.
+        For more details, have a look at the <a href="../reference/#snippet-markup-parameters">snippet markup reference</a>
+        and the <a href="../reference/snippet">snippet placeholder reference</a>.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
-        <pre class="brush: xml; highlight: [2]">
+        <pre class="brush: pheasel; highlight: [2]">
             &nbsp;
-            ${snippet id=mysnippet}$&nbsp;
+            &lt;ph:snippet id=mysnippet&gt;&nbsp;
             &nbsp;
         </pre>
     </div>
@@ -230,17 +230,15 @@
 
     <div class="right-col codesnippet">
         <span class="caption">Example: page markup translated to German</span>
-        <pre class="brush: xml; highlight: [7,13]">
+        <pre class="brush: pheasel; highlight: [6,11]">
             &lt;!DOCTYPE HTML&gt;
             &lt;html&gt;
             &lt;head&gt;
-                &lt;!--
-                ${config
+                &lt;ph:config
                     id       = mypage
                     url      = /meine-seite/
                     template = mytemplate
-                }$ &nbsp;
-                --&gt;
+                &gt; &nbsp;
             &lt;/head&gt;
             &lt;body&gt;
                 Seiteninhalt kommt hier hinein.
@@ -297,7 +295,7 @@
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
-        <pre class="brush: xml; highlight: [5,6,7,8]">
+        <pre class="brush: pheasel; highlight: [5,6,7,8]">
 
         </pre>
     </div>

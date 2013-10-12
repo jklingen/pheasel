@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="../static/pheasel.css"/>
@@ -16,6 +16,7 @@
 
 </head>
 <body>
+
 
 
 <nav class="clearfix">
@@ -35,18 +36,43 @@
 <div id="main">
 
 
-
 <h1>Reference</h1>
 <p>
     Please note: this page is a compact reference documenting the usage of PHeasel's placeholders, if you are new to PHeasel you might prefer to have a look at
     <a href="../getting-started/">Getting Started With PHeasel</a> first, which will take you throught the most important features step by step.
 </p>
-<h2>Markup Configuration Parameters</h2>
+<h2 id="pheasel-tags">PHeasel's tags</h2>
+<div class="clearfix">
+    <div class="left-col">
+        <p>
+            Most web developers prefer an XML/HTML like tags as placeholders for dynamic elements of a website. PHeasel
+            tags basically have the same syntax as a namespaced XML tag, however they are a lot more flexible, for your
+            convenience and taste: quotes are optional and can be single or double, also the slash at the end of a
+            self-closing tag can be left out. And if you want, you can use curly brackets instead angle brackets.<br/>
+            All tags in the example on the right-hand side have exactly the same meaning.
+        </p>
+    </div>
+    <div class="right-col codesnippet">
+        <span class="caption">Example</span>
+        <pre class="brush: pheasel;">
+        &lt;ph:tag attribute="value"&gt;
+        &lt;ph:tag attribute='value'&gt;
+        &lt;ph:tag attribute="value"/&gt;
+        &lt;ph:tag attribute=value&gt;
+        &#123;ph:tag attribute="value"&#125;
+        &#123;ph:tag attribute='value'&#125;
+        &#123;ph:tag attribute="value"/&#125;
+        &#123;ph:tag
+            attribute="value"
+        &#125;
+        </pre>
+        </div>
+</div>
+<h2 id="configparams">Markup Configuration Parameters</h2>
 <div class="left-col">
-    <p>Markup configuration parameters are always enclosed within <code>${config</code> and <code>}$</code>. You can put it anywhere
-    in the markup file, but we recommend placing it on top or within the <code>&lt;head&gt;</code> section. This
-    part will not be included in the HTML output to your visitors, however if you prefer valid HTML in your
-    HTML editor, feel free to wrap it into an HTML comment. You can also do without line breaks and  put it all in one line.</p>
+    <p>Markup configuration parameters are included in a <code>&lt;ph:config&gt;</code> tag. You can put it anywhere
+    in the markup file, but we recommend placing it on top or within the <code>&lt;head&gt;</code> section. The tag
+    will not be included in the HTML output to your visitors. You can also do without line breaks and  put it all in one line.</p>
     <p>There are three kinds of markup files:
         <a href=".#page-markup-parameters">pages</a>,
         <a href=".#template-markup-parameters">templates</a> and
@@ -54,15 +80,11 @@
 </div>
 <div class="right-col codesnippet">
     <span class="caption">Example</span>
-    <pre class="brush: xml; highlight: [5,6,7]">
-        &lt;!DOCTYPE HTML&gt;
+    <pre class="brush: pheasel; highlight: [4]">
+    &lt;!DOCTYPE HTML&gt;
         &lt;html&gt;
         &lt;head&gt;
-            &lt;!--
-            ${config
-                id   = myMarkupFileId
-            }$
-            --&gt;
+            &lt;ph:config id="myMarkupFileId"&gt;
         &lt;/head&gt;
         &lt;body&gt;
         &lt;/body&gt;
@@ -73,7 +95,7 @@
 <div class="clearer"></div>
 <h3 id="page-markup-parameters">Page Markup Parameters</h3>
 <p>A page is a piece of markup that contains your actual page content. Your visitors will be able to access a page by URL.</p>
-<code class="block">${config url=... [id=...] [name=...] [template=...] }$</code>
+<code class="block">&lt;ph:config url=... [id=...] [name=...] [template=...]&gt;</code>
 <table>
     <tr>
         <th>Option name</th>
@@ -127,8 +149,8 @@
 
 <h3 id="template-markup-parameters">Template Markup Parameters</h3>
 <p>A template is a markup wrapper for the pages referencing it. It is usually used to re-use shared markup for page headers and footers, e.g. logo or navigation elements.</p>
-<code class="block">${config [id=...] }$</code>
-<p>Within the template's markup, use the <code>${page}$</code> placeholder to indicate where the actual page content is to be inserted.</code></p>
+<code class="block">&lt;ph:config [id=...]&gt;</code>
+<p>Within the template's markup, use the <a href=".pageplaceholder">page placeholder</a> <code>&lt;ph:page&gt;</code> to indicate where the actual page content is to be inserted.</code></p>
 <table>
     <tr>
         <th>Option name</th>
@@ -149,7 +171,7 @@
 
 <h3 id="template-markup-parameters">Snippet Markup Parameters</h3>
 <p>Snippets are a convenient way to re-use pieces of markup within different pages, e.g. a teaser box in your sidebar, markup for advertisements or any custom component.</p>
-<code class="block">${config [id=...] }$</code>
+<code class="block">&lt;ph:config [id=...]&gt;</code>
 <table>
     <tr>
         <th>Option name</th>
@@ -177,17 +199,17 @@ with a piece of dynamic information, e.g. a relative URL to another page.
     <p class="left-col">
         A URL placeholder is replaced by a (relative) URL to another PHeasel page, for use with HTML links.<br/>
         If the <code>name</code> parameter is configured in the <a href=".#page-markup-parameters">page markup configuration</a>,
-        the <code>${pagename}$</code> can be used to output the name of the target page. It is always replaced with the name
+        the <code>&lt;ph:pagename&gt;</code> can be used to output the name of the target page. It is always replaced with the name
         of the page that has been last adressed with a URL placeholder.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
-        <pre class="brush: xml; highlight: [2]">
+        <pre class="brush: pheasel; highlight: [2]">
             <!-- link to page with ID "mypage" -->
-            &lt;a href="${url pageid=mypage}$"&gt;${pagename}$&lt;/a&gt;
+            &lt;a href="&#123;ph:url pageid='mypage'&#125;"&gt;&lt;ph:pagename&gt;&lt;/a&gt;
         </pre>
         <span class="caption" >The link above would be rendered e.g. like</span>
-        <pre class="brush: xml;">
+        <pre class="brush: pheasel;">
             &lt;a href="my-page/"&gt;My Page&lt;/a&gt; &lt;!-- (en) or --&gt;
             &lt;a href="meine-seite/"&gt;Meine Seite&lt;/a&gt; &lt;!-- (de) --&gt;
         </pre>
@@ -206,12 +228,12 @@ with a piece of dynamic information, e.g. a relative URL to another page.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
-        <pre class="brush: xml; highlight: [2]">
+        <pre class="brush: pheasel; highlight: [2]">
             <!-- referencing logo.png in site/static/img/ -->
-            &lt;img src="${resource url=/static/img/logo.png}$"&gt;
+            &lt;img src="&#123;ph:resource url='/static/img/logo.png'&#125;"&gt;
         </pre>
         <span class="caption">The image above would be rendered e.g. like</span>
-            <pre class="brush: xml;">
+            <pre class="brush: pheasel;">
                 &lt;img src="static/img/logo.png"&gt;
             </pre>
     </div>
@@ -221,22 +243,22 @@ with a piece of dynamic information, e.g. a relative URL to another page.
 <div class="clearfix">
     <p class="left-col">
         Anchor placeholders are useful if you want to internationalise the part after the hash (<code>#</code>) symbol
-        of a URL. When adding an <code>${anchor id=anyid}$</code>
+        of a URL. When adding an <code>&lt;ph:anchor id=anyid&gt;</code>
         placeholder to your page, you can localise it by adding <code>anchor.anyid=my-anchor-text</code> to the page
         markup configuration section.
     </p>
     <div class="right-col codesnippet">
         <span class="caption">Example</span>
-        <pre class="brush: xml; highlight: [2]">
-            &lt;h3 id="${anchor id=myheadline}$"&gt;My Headline&lt;/a&gt;
+        <pre class="brush: pheasel; highlight: [2]">
+            &lt;h3 id="&#123;ph:anchor id='myheadline'&#125;"&gt;My Headline&lt;/a&gt;
         </pre>
         <span class="caption" >The link to the anchor above could be rendered e.g. like</span>
-        <pre class="brush: xml;">
+        <pre class="brush: pheasel;">
             &lt;a href="my-page/#my-headline"&gt;My Headline&lt;/a&gt; &lt;!-- (en) or --&gt;
             &lt;a href="meine-seite/#meine-ueberschrift"&gt;Meine &Uuml;berschrift&lt;/a&gt; &lt;!-- (de) --&gt;
         </pre>
         <span class="caption" >if the page markup configuration includes e.g. one of</span>
-        <pre class="brush: xml;">
+        <pre class="brush: pheasel;">
             anchor.myheadline=my-headline
             anchor.myheadline=meine-ueberschrift
         </pre>
