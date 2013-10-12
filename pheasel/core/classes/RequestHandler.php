@@ -251,15 +251,15 @@ class RequestHandler extends AbstractLoggingClass {
 
     // searches for pheasel_placeholders
     private function process_and_append_markup($append_target, $markup) {
-        $parts = explode(PHEASEL_PLACEHOLDER_PREFIX, $markup); // (.*)${(.*)
+        $parts = preg_split(PHEASEL_PLACEHOLDER_PREFIX, $markup, 2); // (.*)<ph:(.*)
         $this->append($append_target, $parts[0]);
         for($i=1; $i<count($parts); $i++) {
-            $subparts = explode(PHEASEL_PLACEHOLDER_SUFFIX, $parts[$i]);  // (.*)}$(.*)
+            $subparts = preg_split(PHEASEL_PLACEHOLDER_SUFFIX, $parts[$i], 2);  // (.*)>(.*)
             $ph = $this->parse_placeholder_string($subparts[0]);
             // TODO iterator implementation goes here
             $this->append($append_target, $this->process_placeholder($ph));
             if(count($subparts )>1) {
-                $this->append($append_target, $this->unescape_escaped_placeholders($subparts[1]));
+                $this->append($append_target, $subparts[1]);
             }
         }
     }
@@ -308,12 +308,6 @@ class RequestHandler extends AbstractLoggingClass {
         // TODO extension hook here
         // placeholder could not be processed, restore original placeholder - maybe someone else will take care
         return $placeholder->placeholder_string;
-    }
-
-    private function unescape_escaped_placeholders($markup_with_escaped_placeholders) {
-        $ret = str_replace(PHEASEL_PLACEHOLDER_PREFIX_ESCAPED, PHEASEL_PLACEHOLDER_PREFIX, $markup_with_escaped_placeholders);
-        $ret = str_replace(PHEASEL_PLACEHOLDER_SUFFIX_ESCAPED, PHEASEL_PLACEHOLDER_SUFFIX, $ret);
-        return $ret;
     }
 
     /**
