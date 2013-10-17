@@ -45,7 +45,7 @@ class RequestHandler extends AbstractLoggingClass {
 
 
     public $preserve_php = false;
-    public $batch_mode = false;
+    public $export_mode = false;
     private $rendering = false;
     private $current_page_included = false;
 
@@ -155,7 +155,7 @@ class RequestHandler extends AbstractLoggingClass {
         $ret  = $this->head_markup;
         $ret .= '</head>';
         $ret .= $this->body_markup;
-        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->batch_mode) {
+        if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->export_mode) {
             $dbar = new DeveloperBar(strlen($ret) + 14); // +14 for closing HTML
             $ret .= $dbar->get_markup();
         }
@@ -191,7 +191,7 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function include_current_page() {
-        if($this->current_page_included && !$this->batch_mode) {
+        if($this->current_page_included) {
             throw new Exception("Tried to include the current page more than once.");
         }
         $this->current_page_included = true;
