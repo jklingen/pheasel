@@ -4,17 +4,11 @@
  * Note: won't be displayed when PHeasel is running in development environment, because the error page
  * contains more background information.
  */
-
-/*
-${config
-    id=   404
-    name= Page not found
-}$
- */
 ?>
+
 <html>
 <head>
-
+	<ph:config id="404" name="Page not found" />
     <title>Page not found</title>
     <meta name="robots" content="noindex,follow"/>
 </head>

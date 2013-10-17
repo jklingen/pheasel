@@ -3,17 +3,10 @@
  * Custom 500 page, feel free to change it to fit your needs.
  * Note: by default the error stack trace is only displayed in DEV mode, not to scare off visitors.
  */
-
-/*
-${config
-    id=   500
-    name= Internal Server Error
-}$
- */
 ?>
 <html>
 <head>
-
+	<ph:config id="500" name="Internal Server Error" />
     <title>Internal Server Error</title>
     <meta name="robots" content="noindex,follow"/>
 </head>
