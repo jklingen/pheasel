@@ -70,9 +70,20 @@ foreach($urls as $url) {
         if(!file_exists(PHEASEL_EXPORT_DIR.$url)) mkdir(PHEASEL_EXPORT_DIR.$url);
         file_put_contents(PHEASEL_EXPORT_DIR.$url."index.$ext", $markup);
     }
-
 }
 
+$pis_without_url = SiteConfig::get_instance()->get_all_page_infos_without_url();
+echo "Found " . count($pis_without_url)." page(s) without URL.\n";
+foreach($pis_without_url as $pi) {
+    if(preg_match('/[0-9]{3}/',$pi->id)) { // error pages like 404 or 500, let's export them to e.g. 404.html
+        $rh = new RequestHandler(); // do not use the singleton, but a fresh RequestHandler for every page
+        $rh->preserve_php = $preserve_php;
+        $rh->batch_mode = true;
+        $markup = $rh->render_page($pi);
+        file_put_contents(PHEASEL_EXPORT_DIR . DIRECTORY_SEPARATOR . "$pi->id.$ext", $markup);
+        echo " * $pi->id.$ext \n";
+    }
+}
 
 copy_static_dir();
 echo "<strong>Successfully exported to ".PHEASEL_EXPORT_DIR."</strong>\n";
