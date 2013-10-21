@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require_once("../../globals.php");
+require_once(PHEASEL_ROOT . "/globals.php");
 require_once(PHEASEL_CONFIG);
 require_once(PHEASEL_CORE . "/includes/util.php");
 require_once(PHEASEL_CORE . "/classes/domain/PageInfo.php");

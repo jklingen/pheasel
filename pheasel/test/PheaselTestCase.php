@@ -22,7 +22,7 @@
 require_once 'globals.php';
 require_once(PHEASEL_ROOT . "/lib/log4php/Logger.php");
 require_once 'PHPUnit/Autoload.php';
-require_once '../../pheasel_config.php';
+require_once PHEASEL_ROOT . '/../pheasel-config.php';
 
 class PheaselTestCase extends PHPUnit_Framework_TestCase {
 
