@@ -252,7 +252,7 @@ class RequestHandler extends AbstractLoggingClass {
 
     // searches for pheasel_placeholders
     private function process_and_append_markup($append_target, $markup) {
-        $parts = preg_split(PHEASEL_PLACEHOLDER_PREFIX, $markup, 2); // (.*)<ph:(.*)
+        $parts = preg_split(PHEASEL_PLACEHOLDER_PREFIX, $markup); // (.*)<ph:(.*)
         $this->append($append_target, $parts[0]);
         for($i=1; $i<count($parts); $i++) {
             $subparts = preg_split(PHEASEL_PLACEHOLDER_SUFFIX, $parts[$i], 2);  // (.*)>(.*)
