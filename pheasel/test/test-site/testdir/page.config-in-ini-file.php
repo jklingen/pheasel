@@ -1,4 +1,4 @@
-${config
+<ph:config
 id= conf-in-ini
-}$
-<h1>${msg code=headline}$</h1>
+/>
+<h1><ph:msg code=headline/></h1>

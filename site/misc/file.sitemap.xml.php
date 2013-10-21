@@ -1,9 +1,9 @@
 <?php
 
 /*
-${config
+<ph:config
     url = /sitemap.xml
-}$
+/>
  */
 
 /**
