@@ -20,7 +20,7 @@
  */
 
 /**
- * Class Placeholder represents a placeholder string, e.g. <code>${asdf qwer=bla}$</code>
+ * Class Placeholder represents a placeholder string, e.g. <code>&lt;ph:asdf qwer=bla/&gt;</code>
  * where $name would be "asdf"
  * and $attributes an array like [qwer:"bla"]
  * Uses PHP's {@link  parse_ini_string} internally (adding newline before e.g. qwer=), so the same
@@ -47,13 +47,13 @@ class Placeholder {
     public $placeholder_string;
 
     /**
-     * @param $placeholder_string string placeholder string with or without prefix/suffix, e.g. <code>${asdf qwer=bla}$</code>
+     * @param $placeholder_string string placeholder string with or without prefix/suffix, e.g. <code><ph:asdf qwer=bla/></code>
      * @param int $section_mode either Placeholder::SECTION_MODE_PROCESS or Placeholder::SECTION_MODE_IGNORE
      */
     function __construct($placeholder_string, $section_mode = Placeholder::SECTION_MODE_IGNORE) {
         $this->placeholder_string = $placeholder_string;
         $placeholder_string = trim($placeholder_string);
-        // get rid of ${ and }$
+        // get rid of <ph: and />
         $placeholder_string = str_replace(PHEASEL_PLACEHOLDER_PREFIX, "", $placeholder_string);
         $placeholder_string = str_replace(PHEASEL_PLACEHOLDER_SUFFIX, "", $placeholder_string);
         $exp = preg_split('/\s+/', $placeholder_string, 2);
