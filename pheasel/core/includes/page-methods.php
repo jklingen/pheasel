@@ -64,16 +64,21 @@ function get_resource_url($resource_name) {
  * @return string the relative URL need to reference target URL from current URL
  */
 function get_relative_uri($current_url, $target_url) {
-    $target_exp = explode("/", $target_url);
-    $current_exp = explode("/", $current_url);
-    while ( count($target_exp)>0 && $target_exp[0] == $current_exp[0]) {
-        array_shift($target_exp);
-        array_shift($current_exp);
+    $ret = null;
+    if(!isset($current_url)) {
+        $ret = PHEASEL_CONTEXT_PATH . $target_url;
+    } else {
+        $target_exp = explode("/", $target_url);
+        $current_exp = explode("/", $current_url);
+        while ( count($target_exp)>0 && count($current_exp)>0 && $target_exp[0] == $current_exp[0]) {
+            array_shift($target_exp);
+            array_shift($current_exp);
+        }
+        for($i=0; $i< count($current_exp)-1; $i++) {
+            array_unshift($target_exp, "..");
+        }
+        $ret = implode("/", $target_exp);
+        if(strlen($ret)==0) $ret= ".";
     }
-    for($i=0; $i< count($current_exp)-1; $i++) {
-        array_unshift($target_exp, "..");
-    }
-    $ret = implode("/", $target_exp);
-    if(strlen($ret)==0) $ret= ".";
     return $ret;
 }

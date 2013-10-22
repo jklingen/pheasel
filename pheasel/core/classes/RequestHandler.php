@@ -370,4 +370,8 @@ class RequestHandler extends AbstractLoggingClass {
         }
     }
 
+    public function discard() {
+        self::$unique_instance = null;
+    }
+
 }

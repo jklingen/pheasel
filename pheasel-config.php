@@ -13,6 +13,15 @@ $env = getenv('PHEASELENV');
 define('PHEASEL_ENVIRONMENT', $env ? $env : PHEASEL_ENVIRONMENT_DEV);
 
 
+/**
+ * When exporting your site to PHP or HTML, PHeasel needs to know its own location relative to the
+ * web server's root directory. Set this to <code>null</code> if you extracted
+ * PHeasel right into the <code>htdocs</code> directory. If e.g. in <code>htdocs/subdir</code>,
+ * set this to <code>/subdir</code>
+ */
+const PHEASEL_CONTEXT_PATH = null;
+
+
 
 /**
  * Automatically refresh internal file cache with every request. Although doing so is handy when getting started with
