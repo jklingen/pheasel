@@ -14,7 +14,7 @@ foreach(apache_get_modules() as $mod) {
 
 function is_dir_writable($dir) {
     $filename = $dir . DIRECTORY_SEPARATOR . "test.txt";
-    $handle = fopen($filename, 'w') or die("can't open file");
+    $handle = @fopen($filename, 'w');
     if($handle) {
         fclose($handle);
         unlink($filename);
