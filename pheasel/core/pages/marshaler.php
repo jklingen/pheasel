@@ -19,10 +19,10 @@
  * limitations under the License.
  */
 
-require_once("../includes/util.php");
-require_once("../../globals.php");
-require_once("../../../pheasel-config.php");
-require_once("../classes/RequestHandler.php");
-require_once("../includes/page-methods.php");
+require_once("../../../pheasel/globals.php");
+require_once(PHEASEL_ROOT . "/pheasel/core/includes/util.php");
+require_once(PHEASEL_ROOT . "/pheasel-config.php");
+require_once(PHEASEL_ROOT . "/pheasel/core/classes/RequestHandler.php");
+require_once(PHEASEL_ROOT . "/pheasel/core/includes/page-methods.php");
 
 echo RequestHandler::get_instance()->dispatch();

@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-require_once(PHEASEL_ROOT . "/lib/log4php/Logger.php");
+require_once(PHEASEL_ROOT . "/pheasel/lib/log4php/Logger.php");
 
 abstract class AbstractLoggingClass {
 
@@ -28,7 +28,7 @@ abstract class AbstractLoggingClass {
     function __construct()
     {
 
-        Logger::configure(PHEASEL_ROOT.'/log4php.php');
+        Logger::configure(PHEASEL_ROOT.'/pheasel/log4php.php');
         $this->logger = Logger::getLogger(get_class($this));
     }
 

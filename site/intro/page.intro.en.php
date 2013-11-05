@@ -3,71 +3,30 @@ id=   pheaselintro
 url=  /
 name= Intro
 >
+<!DOCTYPE html>
 <html>
 <head>
+    <?php
+    require_once(PHEASEL_ROOT . '/pheasel/core/classes/PrerequisitesCheck.php');
+    $pc = new PrerequisitesCheck();
+    ?>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="<ph:resource url=/pheasel/core/resources/favicon.ico>"/>
+    <link rel="stylesheet" href="<ph:resource url=/pheasel/core/resources/intro.css>"/>
     <title>PHeasel is up and running, yeah.</title>
-    <style>
-        body {
-            font-family:Helvetica, Arial, sans-serif;
-            position:relative;
-            width:100%;
-            background-color: #fffaee;;
-        }
-        div.top {
-            margin-top:13.25%;
-            height:28.15%;
-            width:100%;
-            background-color:#530;
-        }
-        div.bottom {
-            position:relative;
-            margin:auto;
-            width:42em;
-        }
-        h1 {
-            position:absolute;
-            top:-1.5em;
-            right:0;
-            margin:0;
-            font-family: Georgia, serif;
-            color:#FFFAEE;
-            font-size:5.5em;
-            font-weight:normal;
-        }
-        h2 {
-            text-align:right;
-            font-size:2.1em;
-            margin:0.6em 0 1em 0;
-            font-family: Georgia, serif;
-            font-weight:normal;
-        }
-        div.bottom img {
-            position:absolute;
-            top:-7em;
-            font-family: Georgia, serif;
-        }
-        p {
-            margin-top:1em;
-            font-size:1em;
-            line-height:1.5em;
-        }
-        .bottom a {
-            color:#070;
-            text-decoration:none;
-        }
-        .bottom a:hover {
-            text-decoration:underline;
-        }
-        .bottom a:before {
-            content: '\00BB\202F';
-        }
-    </style>
 </head>
+
 <body id="start">
 <div class="top"></div>
 <div class="bottom">
+<?php
+if($pc->has_problems()) { ?>
+    <h1>Ooops!</h1>
+    <h2>Nearly there... please check your config</h2>
+    <p>
+        <?= $pc->get_problem_list() ?>
+    </p>
+<? } else { ?>
     <h1>Yay!</h1>
     <h2>PHeasel is up and running,<br/>ready for you to get started.</h2>
     <img src="{ph:resource url=/pheasel/core/resources/pheasel-logo.png/}">
@@ -79,6 +38,7 @@ name= Intro
         Find the local working directory for your site at <code><?=PHEASEL_PAGES_DIR?></code>
     </p>
     <p>Thanks for using PHeasel - have fun.</p>
+<?php } ?>
 </div>
 
 
