@@ -57,7 +57,8 @@ class RequestHandler extends AbstractLoggingClass {
      * @return string HTML or PHP markup of the rendered page; PHP within the markup will be eval'd by default, set $preserve_php to true to avoid that (e.g. to export pages keeping dynamic php functionality)
      * @throws PageNotFoundException if no page could be found for this request
      */
-    public function dispatch($relative_url = NULL) {
+    public function dispatch($relative_url = null) {
+        $ret = null;
         try {
             if((PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD) && PHEASEL_AUTO_UPDATE_FILES_CACHE) {
                 SiteConfigWriter::get_instance()->update_cache();
@@ -67,6 +68,7 @@ class RequestHandler extends AbstractLoggingClass {
                 $strpos_pheasel = strpos($_SERVER['PHP_SELF'], '/pheasel/');
                 $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
             }
+            if($this->debugEnabled()) $this->debug("Dispatching request: $relative_url");
             $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
 
             // no page found? maybe it is not a page, but a file?
@@ -81,16 +83,25 @@ class RequestHandler extends AbstractLoggingClass {
                 }
             }
             if($pageInfo == null) {
+                // page not found for url
                 $pageInfo = $this->handle_page_not_found($relative_url);
             }
         } catch(Exception $ex) {
+            // error while trying to find page
             $pageInfo = $this->handle_internal_server_error($ex, $relative_url);
         }
 
         // page not found should have been handled above. if not, there's something wrong (maybe 404 page was removed)
         if(!isset($pageInfo)) throw new PageNotFoundException("Could not find page for $relative_url");
 
-        return $this->render_page($pageInfo);
+        try {
+            $ret = $this->render_page($pageInfo);
+        } catch(Exception $ex) {
+            // error while trying to render page
+            $pageInfo = $this->handle_internal_server_error($ex, $relative_url);
+            $ret = $this->render_page($pageInfo);
+        }
+        return $ret ;
     }
 
     public function render_page($pageInfo) {
@@ -136,6 +147,7 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function handle_internal_server_error($exception, $relative_url) {
+        $this->logger->error("An error occurred while trying to render page $relative_url",$exception);
         header("HTTP/1.1 500 Internal Server Error");
         $lang = isset(PageInfo::$current) ? PageInfo::$current->lang : PHEASEL_FALLBACK_LANGUAGE;
         $pageInfo = SiteConfig::get_instance()->get_page_info('500', $lang);
@@ -190,9 +202,9 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function include_current_page() {
-        if($this->current_page_included) {
+        /*if($this->current_page_included) {
             throw new Exception("Tried to include the current page more than once.");
-        }
+        }*/
         $this->current_page_included = true;
         $this->read_markup_file(PHEASEL_PAGES_DIR.PageInfo::$current->file);
 
@@ -200,10 +212,22 @@ class RequestHandler extends AbstractLoggingClass {
 
     private function include_snippet($id) {
         if($this->debugEnabled()) $this->debug("Including snippet $id");
-        $this->read_markup_file(PHEASEL_PAGES_DIR.SiteConfig::get_instance()->get_snippet_info($id)->file);
+        $si = SiteConfig::get_instance()->get_snippet_info($id);
+        if($si) {
+            $this->read_markup_file(PHEASEL_PAGES_DIR . $si->file);
+        } else {
+            throw new Exception("Snippet not found for id $id");
+        }
     }
 
     private function read_markup_file($file) {
+        if($this->debugEnabled()) $this->debug("Reading markup file $file");
+        if(!file_exists($file)) {
+            throw new Exception("File not found: $file");
+        }
+        if(is_dir($file)) {
+            throw new Exception("File is a directory: $file");
+        }
         $this->hierarchy_include($file);
         // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is necessary, though
         $markup = file_get_contents($file);
@@ -318,7 +342,7 @@ class RequestHandler extends AbstractLoggingClass {
      */
     private function hierarchy_include($file, $current_dir=PHEASEL_PAGES_DIR) {
         if(!$this->rendering) {
-            if($this->debugEnabled()) $this->debug("Looking for files to include in $current_dir");
+            if($this->debugEnabled()) $this->debug("Looking for files to include in $file");
             $path_info = pathinfo($file);
 
             // TODO consider iterating from PHEASEL_PAGES_DIR down instead from markup file up
