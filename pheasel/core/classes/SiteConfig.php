@@ -126,10 +126,13 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching page has been found for the provided ID
      */
     public function get_page_info($page_id, $lang = null) {
-        if($this->debugEnabled()) $this->debug("Retrieving page info for id $page_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
+        if($this->debugEnabled()) $this->debug("Retrieving page info for id $page_id and language $lang");
         $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and @lang='$lang']");
-        if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and not(@lang)]");
+        if(count($foundNodes)==0) {
+            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $page_id without language");
+            $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and not(@lang)]");
+        }
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_page_info_from_node($foundNodes[0]);
@@ -144,10 +147,13 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching snippet has been found for the provided ID
      */
     public function get_snippet_info($snippet_id, $lang = null) {
-        if($this->debugEnabled()) $this->debug("Retrieving snippet info for id $snippet_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
+        if($this->debugEnabled()) $this->debug("Retrieving snippet info for id $snippet_id and language $lang");
         $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and @lang='$lang']");
-        if(count($foundNodes)==0) $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and not(@lang)]");
+        if(count($foundNodes)==0) {
+            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $snippet_id without language");
+            $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and not(@lang)]");
+        }
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_snippet_info_from_node($foundNodes[0]);
@@ -163,11 +169,11 @@ class SiteConfig extends AbstractLoggingClass {
      * @throws AmbiguousConfigException if more than one matching template has been found for the provided ID
      */
     public function get_template_info($tmpl_id, $lang = null) {
-        if($this->debugEnabled()) $this->debug("Retrieving template info for id $tmpl_id and language $lang");
         if($lang == null) $lang = PageInfo::$current->lang;
+        if($this->debugEnabled()) $this->debug("Retrieving template info for id $tmpl_id and language $lang");
         $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and @lang='$lang']");
         if(count($foundNodes)==0) {
-            // template not found, try to find a non-localized variant
+            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $tmpl_id without language");
             $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and not(@lang)]");
         }
         switch(count($foundNodes)) {
