@@ -132,7 +132,7 @@ class SiteConfigWriter extends AbstractLoggingClass {
                         $this->trace("Looking for L10N ini files: " . $glob_pattern);
                         foreach(glob($pi['dirname'] . DIRECTORY_SEPARATOR . $pi['filename'] . '.??.ini', GLOB_NOSORT ) as $inifile) {
                             $ini_attrs = $this->extend_attrs_from_ini($attrs, $inifile);
-                            $this->debug("Registering markup file with INI localisation" .$ini_attrs["file"] . "(".$pi['filename'].")");
+                            $this->debug("Registering markup file with INI localisation " .$ini_attrs["file"] . " (".$pi['filename'].")");
                             $this->create_markup_file_node($type, $ini_attrs);
                             $file_registered = true;
                         }
