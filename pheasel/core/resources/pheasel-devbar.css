@@ -29,6 +29,24 @@
     line-height: 1.9em;
     font-family: sans-serif;
 }
+#pheasel-devbar-popunder {
+    display:none;
+}
+#pheasel-devbar-popunder .filelist {
+    z-index: 9998;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-bottom: 2px solid #530;
+    border-right: 2px solid #530;
+    border-bottom-right-radius: 10px;
+    background-color: #fffaee;
+    padding: 2em 10px 7px 10px;
+    color: #333;
+    font-size: 0.75em;
+    line-height: 1.9em;
+    font-family: sans-serif;
+}
 
 #pheasel-devbar-control {
     float: left;

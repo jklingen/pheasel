@@ -23,6 +23,7 @@ require_once(PHEASEL_CORE . "/includes/util.php");
 require_once(PHEASEL_CORE . "/classes/domain/PageInfo.php");
 require_once(PHEASEL_CORE . "/classes/AbstractLoggingClass.php");
 require_once(PHEASEL_CORE . "/classes/DeveloperBar.php");
+require_once(PHEASEL_CORE . "/classes/FileNode.php");
 require_once(PHEASEL_CORE . "/classes/SiteConfig.php");
 require_once(PHEASEL_CORE . "/classes/SiteConfigWriter.php");
 require_once(PHEASEL_CORE . "/includes/page-methods.php");
@@ -48,6 +49,8 @@ class RequestHandler extends AbstractLoggingClass {
     private $rendering = false;
     private $current_page_included = false;
 
+    private $markup_hierarchy; // will hold the hierarchy of all markup files for the current page
+    private $markup_stack = array(); // will hold a stack of all markup files currently under processing
     private $head_markup = NULL; // will hold anything from beginning of the document until (exclusive) closing </head>
     private $body_markup = NULL; // will hold anything from (inclusive) opening <body> until end of the document
     private $messages = array();
@@ -150,7 +153,8 @@ class RequestHandler extends AbstractLoggingClass {
         $this->logger->error("An error occurred while trying to render page $relative_url",$exception);
         header("HTTP/1.1 500 Internal Server Error");
         $lang = isset(PageInfo::$current) ? PageInfo::$current->lang : PHEASEL_FALLBACK_LANGUAGE;
-        $pageInfo = SiteConfig::get_instance()->get_page_info('500', $lang);
+        $pageInfo = SiteConfig::get_instance()->get_page_info('500', PHEASEL_FALLBACK_LANGUAGE);
+        if(!$pageInfo && $lang != PHEASEL_FALLBACK_LANGUAGE) $pageInfo = SiteConfig::get_instance()->get_page_info('500', $lang);
         if($pageInfo) {
             $pageInfo->url = $relative_url;
             $pageInfo->data['exception'] = $exception;
@@ -167,7 +171,7 @@ class RequestHandler extends AbstractLoggingClass {
         $ret .= '</head>';
         $ret .= $this->body_markup;
         if(PHEASEL_ENVIRONMENT != PHEASEL_ENVIRONMENT_PROD && !$this->export_mode) {
-            $dbar = new DeveloperBar(strlen($ret) + 14); // +14 for closing HTML
+            $dbar = new DeveloperBar($this->markup_hierarchy, strlen($ret) + 14); // +14 for closing HTML
             $ret .= $dbar->get_markup();
         }
         $ret .= '</body></html>';
@@ -221,6 +225,7 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     private function read_markup_file($file) {
+        $this->before_read_markup_file($file);
         if($this->debugEnabled()) $this->debug("Reading markup file $file");
         if(!file_exists($file)) {
             throw new Exception("File not found: $file");
@@ -229,7 +234,7 @@ class RequestHandler extends AbstractLoggingClass {
             throw new Exception("File is a directory: $file");
         }
         $this->hierarchy_include($file);
-        // TODO maybe make sure that everything is included *before* anything is rendered, so that a snippet can e.g. provide stuff for the template, too? not sure whether this is necessary, though
+
         $markup = file_get_contents($file);
         $parts = explode('<head>',$markup); // (.*)<head>(.*)
         if(count($parts)>1) {
@@ -257,6 +262,28 @@ class RequestHandler extends AbstractLoggingClass {
           $this->append_body(str_replace("<body>","", $parts[0]));
         }
         // TODO exception handling
+        $this->after_read_markup_file($file);
+    }
+
+    private function before_read_markup_file($file) {
+        $this->before_read_file($file);
+    }
+    private function after_read_markup_file($file) {
+        $this->after_read_file($file);
+    }
+    private function before_read_file($file)
+    {
+        $fn = new FileNode($file);
+        if (count($this->markup_stack) == 0) {
+            $this->markup_hierarchy = $fn;
+            array_push($this->markup_stack, $fn);
+        } else {
+            array_push($this->markup_stack[count($this->markup_stack) - 1]->children, $fn);
+            array_push($this->markup_stack, $fn);
+        }
+    }
+    private function after_read_file($file) {
+        array_pop($this->markup_stack);
     }
 
     private function append_head($markup) {
@@ -351,12 +378,12 @@ class RequestHandler extends AbstractLoggingClass {
             }
 
             // e.g. all.inc.php in current directory
-            try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.inc.php');
+            $this->try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.inc.php');
             // e.g. all.ini in current directory
             $this->find_ini_messages($path_info['dirname'] . DIRECTORY_SEPARATOR . 'all.ini');
 
             // e.g. en.inc.php in current directory
-            try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.inc.php');
+            $this->try_include($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.inc.php');
             // e.g. en.ini in current directory
             $this->find_ini_messages($path_info['dirname'] . DIRECTORY_SEPARATOR . PageInfo::$current->lang .  '.ini');
 
@@ -367,14 +394,14 @@ class RequestHandler extends AbstractLoggingClass {
                     // markup file does not seem to be I18Ned, look out for L10N ini file}
 
                     // e.g. index.inc.en.php nefore loading index.php
-                    try_include($path_without_extension . '.inc.' . PageInfo::$current->lang . '.' . $path_info['extension']);
+                    $this->try_include($path_without_extension . '.inc.' . PageInfo::$current->lang . '.' . $path_info['extension']);
 
                     // e.g. index.en.ini nefore loading index.php
                     $this->find_ini_messages($path_without_extension . '.' . PageInfo::$current->lang .  '.ini');
                 }
 
                 // e.g. index.en.inc.php nefore loading index.en.php
-                try_include($path_without_extension . '.inc.' . $path_info['extension']);
+                $this->try_include($path_without_extension . '.inc.' . $path_info['extension']);
                 // e.g. index.en.ini nefore loading index.en.php
                 $this->find_ini_messages($path_without_extension . '.ini');
             }
@@ -382,11 +409,39 @@ class RequestHandler extends AbstractLoggingClass {
     }
 
     /**
+     * include file if exists, do nothing otherwise
+     * @param $file
+     */
+    function try_include($file) {
+        if(is_file($file)) {
+            $this->before_read_file($file);
+            include $file;
+            $this->after_read_file($file);
+        }
+    }
+
+    /**
+     * parse ini file if exists, do nothing otherwise
+     * @param $file
+     * @return array|bool
+     */
+    function try_parse_ini($file) {
+        $ret = false;
+        if(is_file($file)) {
+            $this->before_read_file($file);
+            $ret =  parse_ini_file($file, true);
+            $this->after_read_file($file);
+        }
+        return $ret;
+
+    }
+
+    /**
      * parse ini file if exists, do nothing otherwise
      * @param $file
      */
     private function find_ini_messages($file) {
-        $parsed = try_parse_ini($file);
+        $parsed = $this->try_parse_ini($file);
 
         if($parsed && count($parsed) > 0) {
             if(isset($parsed['messages']) && count($parsed['messages']) > 0) $this->messages = array_merge($this->messages, $parsed['messages']);

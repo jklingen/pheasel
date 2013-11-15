@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PHeasel - a lightweight and simple PHP website development kit
  *
@@ -17,24 +19,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function devbarExpandCollapse() {
-    var c = document.getElementById('pheasel-devbar-control');
-    if(c.style.display != 'none') {
-        c.style.display = 'none';
-        popunderCollapse();
-        document.cookie = 'pheasel_devbar_collapsed=true; path=/';
-    } else {
-        c.style.display = 'inline';
-        document.cookie = 'pheasel_devbar_collapsed=; path=/';
+class FileNode {
+
+    public $filename;
+    public $children = array();
+
+    function __construct($filename) {
+        $this->filename = $filename;
     }
-}
 
-function popunderExpandCollapse() {
-    var c = document.getElementById('pheasel-devbar-popunder');
-    c.style.display = (c.style.display != 'block') ? 'block' : 'none';
-}
+    function add_child($file_node) {
+        array_push($children, $file_node);
+    }
 
-function popunderCollapse() {
-    var c = document.getElementById('pheasel-devbar-popunder');
-    c.style.display = 'none';
+
 }

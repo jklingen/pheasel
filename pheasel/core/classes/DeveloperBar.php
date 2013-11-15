@@ -1,18 +1,32 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
- * User: jens
- * Date: 06.10.13
- * Time: 17:22
- * To change this template use File | Settings | File Templates.
+ * PHeasel - a lightweight and simple PHP website development kit
+ *
+ * Copyright 2013 Jens Klingen
+ *
+ * For more information see: http://pheasel.org/
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 class DeveloperBar {
 
-    private $estimated_page_Size;
+    private $markup_hierarchy;
+    private $estimated_page_size;
 
-    function __construct($estimated_page_Size) {
-        $this->estimated_page_Size = $estimated_page_Size;
+    function __construct($markup_hierarchy, $estimated_page_size) {
+        $this->markup_hierarchy = $markup_hierarchy;
+        $this->estimated_page_size = $estimated_page_size;
     }
 
     public function get_markup() {
@@ -29,10 +43,32 @@ class DeveloperBar {
                     <button type="submit" name="exportall" value="true">all pages</button>
                     <button type="submit" name="exportsingle" value="'.PageInfo::$current->url.'">this page</button>
                     &nbsp;|&nbsp;
-                    Markup size: ~ '.$this->format_bytes($this->estimated_page_Size,1).'B
+                    <button type="button" onclick="popunderExpandCollapse();return false;">Markup</button>
+                    size: ~ '.$this->format_bytes($this->estimated_page_size,1).'B
+
                 </form>
                 <img class="logo" onclick="devbarExpandCollapse()" src="'.get_resource_url('/pheasel/core/resources/pheasel-logo.png').'"/>
-            </div>';
+            </div>
+            <div id="pheasel-devbar-popunder">
+                <div class="filelist">
+                <strong>Markup files used in this page</strong>
+                <ul>' . $this->markup_hierarchy_list($this->markup_hierarchy) . '</ul>
+            </div>
+
+            ';
+    }
+
+    private function markup_hierarchy_list($file_node) {
+        $ret = "<li>" . substr($file_node->filename, strlen(PHEASEL_PAGES_DIR)) . "</li>";
+        if(count($file_node->children) > 0) {
+            $ret .= "<ul>";
+            foreach($file_node->children as $fn) {
+                $ret .= $this->markup_hierarchy_list($fn);
+            }
+            $ret .= "</ul>";
+            return  $ret;
+        }
+        return $ret;
     }
 
     private function format_bytes($size, $precision = 2) {
