@@ -1,0 +1,84 @@
+/*
+ * Copyright 2013 Jens Klingen
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+html {
+    font-size:14px;
+    line-height:1.4em;
+}
+
+body {
+    margin:0;
+    background-color: #fffaee;
+    font-family:Helvetica, Arial, sans-serif;
+    color:#321;
+}
+
+h1 {
+    line-height:1.4em;
+}
+
+nav {
+    padding-left:10px;
+    background-color:#530;
+    width:50em;
+}
+
+nav a {
+    color:#fffaee !important;
+    text-decoration:none;
+    line-height:3em;
+    margin: 10px;
+}
+nav a:hover,
+nav a:focus {
+    color:#fff;
+    text-decoration:underline;
+}
+
+nav ul {
+    margin:auto;
+    padding:0;
+    list-style-type: none;
+}
+nav li {
+    float:left;
+}
+nav:after {
+    display:block;
+    clear:both;
+    height: 0;
+    line-height: 0;
+    visibility:hidden;
+    content: ".";
+}
+
+#main,
+.hint {
+    margin:auto;
+    width:50em;
+}
+.hint {
+    margin-top:7em;
+}
+
+a {
+    color:#070;
+    text-decoration:none;
+}
+a:hover {
+    text-decoration:underline;
+}
+
