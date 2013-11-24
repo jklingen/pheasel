@@ -35,7 +35,8 @@ if($pc->has_problems()) { ?>
         Consult the <a href="http://pheasel.org/reference/?ref=intro">online reference</a> for more detailed information.
     </p>
     <p>
-        Find the local working directory for your site at <code><?=PHEASEL_PAGES_DIR?></code>
+        Find the local working directory for your site at <code><?=PHEASEL_PAGES_DIR?></code><br/>
+        Be sure to have a look at the <a href="{ph:url pageid=examples}">examples</a>, you can find the markup files in the <code>examples</code> subdirectory.
     </p>
     <p>Thanks for using PHeasel - have fun.</p>
 <?php } ?>
