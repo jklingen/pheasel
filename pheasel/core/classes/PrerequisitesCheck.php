@@ -87,7 +87,7 @@ class PrerequisitesCheck {
                     <strong>File permissions</strong><br/> are not set up correctly, PHeasel (i.e. Apache web server) needs to be able to write to
                     <ul>
                         <?php foreach($this->not_writable as $dir) { ?>
-                            <li><?=$dir?></li>
+                            <li><? echo $dir?></li>
                         <?php } ?>
                     </ul>
                 </li>

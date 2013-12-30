@@ -21,7 +21,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
     <url>
         <loc><?php echo $pi->url; ?></loc>
-        <lastmod><?=date('Y-m-d',filemtime(PHEASEL_PAGES_DIR.$pi->file))?></lastmod>
+        <lastmod><? echo date('Y-m-d',filemtime(PHEASEL_PAGES_DIR.$pi->file))?></lastmod>
     </url>
     <?php
             }
