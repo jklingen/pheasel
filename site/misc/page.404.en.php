@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<ph:config id="404" name="Page not found" template="pheasel" />
+	<ph:config id="404" name="Page not found" />
     <title>Page not found</title>
     <meta name="robots" content="noindex,follow"/>
 </head>
