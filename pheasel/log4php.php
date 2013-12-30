@@ -47,7 +47,7 @@ return array(
             ),
             'params' =>
             array(
-                'file' => PHEASEL_ROOT.'/logs/pheasel.log',
+                'file' => PHEASEL_ROOT.'/pheasel/logs/pheasel.log',
                 'maxFileSize' => '1MB',
                 'maxBackupIndex' => '10',
             ),
