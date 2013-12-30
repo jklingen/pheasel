@@ -133,6 +133,7 @@ class SiteConfig extends AbstractLoggingClass {
             if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $page_id without language");
             $foundNodes = $this->xmlRoot->xpath("pages/item[@id='$page_id' and not(@lang)]");
         }
+        $this->debug("Found " . count($foundNodes) . " page(s) for id $page_id");
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_page_info_from_node($foundNodes[0]);
@@ -151,9 +152,10 @@ class SiteConfig extends AbstractLoggingClass {
         if($this->debugEnabled()) $this->debug("Retrieving snippet info for id $snippet_id and language $lang");
         $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and @lang='$lang']");
         if(count($foundNodes)==0) {
-            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $snippet_id without language");
+            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve snippet info for id $snippet_id without language");
             $foundNodes = $this->xmlRoot->xpath("snippets/item[@id='$snippet_id' and not(@lang)]");
         }
+        $this->debug("Found " . count($foundNodes) . " snippet(s) for id $snippet_id");
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_snippet_info_from_node($foundNodes[0]);
@@ -173,9 +175,10 @@ class SiteConfig extends AbstractLoggingClass {
         if($this->debugEnabled()) $this->debug("Retrieving template info for id $tmpl_id and language $lang");
         $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and @lang='$lang']");
         if(count($foundNodes)==0) {
-            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve page info for id $tmpl_id without language");
+            if($this->debugEnabled()) $this->debug("Nothing found - trying to retrieve template info for id $tmpl_id without language");
             $foundNodes = $this->xmlRoot->xpath("templates/item[@id='$tmpl_id' and not(@lang)]");
         }
+        $this->debug("Found " . count($foundNodes) . " template(s) for id $tmpl_id");
         switch(count($foundNodes)) {
             case 0: return NULL;
             case 1: return $this->get_template_info_from_node($foundNodes[0]);
