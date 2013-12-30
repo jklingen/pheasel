@@ -69,7 +69,7 @@ class RequestHandler extends AbstractLoggingClass {
             if(!isset($relative_url)) {
                 // pheasel might not be in docroot, discard anything which is above in hierarchy
                 $strpos_pheasel = strpos($_SERVER['PHP_SELF'], '/pheasel/');
-                $relative_url = substr($_SERVER["REQUEST_URI"], $strpos_pheasel);
+                $relative_url = substr(urldecode($_SERVER["REQUEST_URI"]), $strpos_pheasel);
             }
             if($this->debugEnabled()) $this->debug("Dispatching request: $relative_url");
             $pageInfo = SiteConfig::get_instance()->get_page_info_by_url($relative_url);
