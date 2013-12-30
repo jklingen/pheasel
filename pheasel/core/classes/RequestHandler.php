@@ -201,7 +201,7 @@ class RequestHandler extends AbstractLoggingClass {
         } else {
             $ti = SiteConfig::get_instance()->get_template_info($page_info->template);
             if(isset($ti)) $this->read_markup_file(PHEASEL_PAGES_DIR.$ti->file);
-            else throw new TemplateNotFoundException("Template not found for id ".$page_info->template);
+            else throw new TemplateNotFoundException("Template not found for id ".$page_info->template . " while collating markup for page " . $page_info->id);
         }
     }
 
