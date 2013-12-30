@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <ph:config id="examples" name="Beispile" url="/beispiele/" template="examples" />
+    <ph:config id="examples" name="Beispiele" url="/beispiele/" template="examples" />
 </head>
 <body>
 
